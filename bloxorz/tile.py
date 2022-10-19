@@ -39,7 +39,8 @@ class Tile:
 
 
 class Bridge:
-    def __int__(self, *args):
+    def __init__(self, index, *args):
         self.list_tile = [tile for tile in args if isinstance(tile, Tile)]
+        self.index = index
 
 

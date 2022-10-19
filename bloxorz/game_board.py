@@ -1,5 +1,6 @@
 from bloxorz.block import DoubleBlock, DoubleBlockState
-from tile import Tile, TileType, BridgeState
+from bloxorz.switch import NormalSwitch, SwitchType, SwitchFunction, TeleportSwitch
+from tile import Tile, TileType, BridgeState, Bridge
 
 
 class GameBoard:
@@ -18,18 +19,52 @@ class GameBoard:
 
         # Initialize map
         self.map = []
+        list_switch = []
         for x_axis in range(0, self.width):
             map_col = []
             for y_axis in range(0, self.height):
-                match map_string[x_axis][y_axis]:
-                    case "----":
-                        map_col.append(Tile(x_axis, y_axis, state=TileType.OFF))
-                    case "Tile":
-                        map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
-                    case "Goal":
-                        map_col.append(Tile(x_axis, y_axis, state=TileType.GOAL))
-
+                element = map_string[x_axis][y_axis]
+                if isinstance(element, str):
+                    match map_string[x_axis][y_axis]:
+                        case "----":
+                            map_col.append(Tile(x_axis, y_axis, state=TileType.OFF))
+                        case "Tile":
+                            map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
+                        case "Goal":
+                            map_col.append(Tile(x_axis, y_axis, state=TileType.GOAL))
+                elif isinstance(element, dict):
+                    map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
+                    list_switch.append({
+                        "position": (x_axis, y_axis),
+                        "object": element
+                    })
             self.map.append(map_col)
+
+        # Initialize list of bridge
+        self.bridges = [
+            Bridge(index, [self.map[x][y] for (x, y) in bridge])
+            for index, bridge in enumerate(self.bridges)
+        ]
+
+        # Initialize all switch
+        for sw in list_switch:
+            x = sw["position"][0]
+            y = sw["position"][1]
+            if sw["object"]["sw_type"] == "NORMAL":
+                self.map[x][y] = NormalSwitch(
+                    x,
+                    y,
+                    sw["object"]["type"],
+                    sw["object"]["function"],
+                    [bridge for index, bridge in enumerate(self.bridges) if index in sw["object"]["bridges"]]
+                )
+
+            elif sw["object"]["sw_type"] == "TELEPORT":
+                first_tile = tuple(sw["object"]["tiles"][0])
+                second_tile = tuple(sw["object"]["tiles"][1])
+                first_tile = self.map[first_tile[0]][first_tile[1]]
+                second_tile = self.map[second_tile[0]][second_tile[1]]
+                self.map[x][y] = TeleportSwitch(x, y, sw["object"]["type"], first_tile, second_tile)
 
     def is_goal(self, block):
         if (

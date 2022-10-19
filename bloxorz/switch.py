@@ -1,5 +1,9 @@
 from enum import Enum
-from tile import Tile, TileType, Bridge
+
+from multipledispatch import dispatch
+
+from bloxorz.block import DoubleBlock, DoubleBlockState
+from tile import Tile, TileType, Bridge, BridgeState
 
 
 class SwitchType(Enum):
@@ -13,61 +17,117 @@ class SwitchFunction(Enum):
     TO_TOGGLE = 2
 
 
-class Switch(Tile):
+class TeleportSwitch(Tile):
 
-    def __init__(self, x_axis, y_axis, sw_type):
-        if isinstance(sw_type, SwitchType):
-            super().__init__(x_axis, y_axis)
-            self.type = sw_type
-        else:
-            raise Exception("Type of switch is not valid")
-
-
-class TeleportSwitch(Switch):
-
-    def __int__(self, x_axis, y_axis, sw_type):
-        super().__init__(sw_type, x_axis, y_axis)
+    def __int__(self, x_axis, y_axis):
+        super().__init__(x_axis, y_axis)
         self.first_tile = None
         self.second_tile = None
 
     def __init__(self, x_axis, y_axis, sw_type, first_tile, second_tile):
         if not isinstance(first_tile, Tile) or not isinstance(second_tile, Tile):
-            raise Exception("Tiles are not valid")
+            raise Exception("Some fields are invalid to initialize TeleportSwitch")
         else:
             super().__init__(sw_type, x_axis, y_axis)
             self.first_tile = first_tile
             self.second_tile = second_tile
 
-    def get_split_position(self):
-        if self.first_tile.state == TileType.ON and self.second_tile.state == TileType.ON:
-            return self.first_tile.get_position(), self.second_tile.get_position()
+    @dispatch(DoubleBlock)
+    def trigger(self, block):
+        if (
+                block.state == DoubleBlockState.STANDING
+                and block.first_block.x_axis == self.x_axis
+                and block.first_block.y_axis == self.y_axis
+        ):
+            block.first_block.set_position(self.first_tile.x_axis, self.first_tile.y_axis)
+            block.second_block.set_position(self.second_tile.x_axis, self.second_tile.y_axis)
+            block.state = DoubleBlockState.DIVIDED
+            block.focussing = block.first_block
 
-
-class NormalSwitch(Switch):
-
-    def __int__(self, x_axis, y_axis, sw_type, function, bridge):
-        if isinstance(function, SwitchFunction) and isinstance(sw_type, SwitchType) and isinstance(bridge, Bridge):
-            super().__init__(x_axis, y_axis, sw_type)
-            self.function = function
-            self.bridge = bridge
         else:
-            raise Exception("aa")
+            raise Exception(f"can not trigger {block} by teleport switch {self}")
 
+
+class NormalSwitch(Tile):
+
+    bridges: list[Bridge]
+
+    def __init__(self, x_axis, y_axis, sw_type, function, bridges):
+        if isinstance(function, SwitchFunction) and isinstance(sw_type, SwitchType) and isinstance(bridges, list):
+            for bridge in bridges:
+                if not isinstance(bridge, Bridge):
+                    raise Exception("List of bridge are invalid to initialize NormalSwitch")
+
+            super().__init__(x_axis, y_axis)
+            self.type = sw_type
+            self.function = function
+            self.bridges = bridges
+        else:
+            raise Exception("Some fields are invalid to initialize NormalSwitch")
+
+    @dispatch(DoubleBlock, list)
+    def trigger(self, block, list_state_all_bridge):
+        if self.is_matched_condition(block):
+            list_index = self.get_all_index_of_bridges()
+            match self.function:
+                case SwitchFunction.TO_TOGGLE:
+                    for index in list_index:
+                        list_state_all_bridge[index] = not list_state_all_bridge[index]
+
+                case SwitchFunction.TO_TURN_ON:
+                    for index in list_index:
+                        if list_state_all_bridge[index] == BridgeState.NOT_ACTIVE:
+                            list_state_all_bridge[index] = not list_state_all_bridge[index]
+
+                case SwitchFunction.TO_TURN_OFF:
+                    for index in list_index:
+                        if list_state_all_bridge[index] == BridgeState.ACTIVATED:
+                            list_state_all_bridge[index] = not list_state_all_bridge[index]
+
+    @dispatch()
     def trigger(self):
         match self.function:
             case SwitchFunction.TO_TOGGLE:
-                for tile in self.bridge.list_tile:
-                    tile.toggle()
+                for bridge in self.bridges:
+                    for tile in bridge.list_tile:
+                        tile.toggle()
             case SwitchFunction.TO_TURN_ON:
-                for tile in self.bridge.list_tile:
-                    if tile.state == TileType.ON:
-                        return
-                for tile in self.bridge.list_tile:
-                    tile.toggle()
+                for bridge in self.bridges:
+                    for tile in bridge.list_tile:
+                        if tile.state == TileType.OFF:
+                            tile.toggle()
             case SwitchFunction.TO_TURN_OFF:
-                for tile in self.bridge.list_tile:
-                    if tile.state == TileType.OFF:
-                        return
-                for tile in self.bridge.list_tile:
-                    tile.toggle()
+                for bridge in self.bridges:
+                    for tile in bridge.list_tile:
+                        if tile.state == TileType.ON:
+                            tile.toggle()
 
+    def get_all_index_of_bridges(self):
+        list_index = []
+        for bridge in self.bridges:
+            list_index.append(bridge.index)
+        return list_index
+
+    def is_matched_condition(self, block):
+        if not isinstance(block, DoubleBlock):
+            raise Exception(f"This block {block} is invalid")
+        return (
+                # check condition of block to trigger this switch
+                (
+                        # condition of heavy switch
+                        self.type == SwitchType.HEAVY
+                        and block.state == DoubleBlockState.STANDING
+                        and block.first_block.x_axis == self.x_axis
+                        and block.first_block.y_axis == self.y_axis
+                )
+                or
+                (
+                        # condition of soft switch
+                        self.type == SwitchType.SOFT
+                        and (
+                                (block.first_block.x_axis == self.x_axis and block.first_block.y_axis == self.y_axis)
+                                or
+                                (block.second_block.x_axis == self.x_axis and block.second_block.y_axis == self.y_axis)
+                        )
+                )
+        )

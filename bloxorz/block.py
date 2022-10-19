@@ -1,8 +1,11 @@
 from enum import Enum
 
 
-def manhattan_distance(f_pos, s_pos):
-    return abs(f_pos[0] - s_pos[0]) + abs(f_pos[1] - s_pos[1])
+def manhattan_distance(f, s):
+    if isinstance(f, SingleBlock) and isinstance(s, SingleBlock):
+        return abs(f.x_axis - s.x_axis) + abs(f.y_axis - s.y_axis)
+    elif isinstance(f, tuple) and isinstance(s, tuple):
+        return abs(f[0] - s[0]) + abs(f[1] - s[1])
 
 
 class DoubleBlockState(Enum):
@@ -30,34 +33,101 @@ class DoubleBlock:
             raise Exception("Some fields are invalid to initialize a double block")
 
     def move_up(self):
-        pass
+        match self.state:
+            case DoubleBlockState.STANDING:
+                self.first_block.move_up(step=2)
+                self.second_block.move_up(step=1)
+
+            case DoubleBlockState.LYING:
+                self.first_block.move_up(step=1)
+                self.second_block.move_up(step=1)
+
+            case DoubleBlockState.DIVIDED:
+                if not isinstance(self.focussing, SingleBlock):
+                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+                self.focussing.move_up(step=1)
+                if manhattan_distance(self.first_block, self.second_block) == 1:
+                    self.state = DoubleBlockState.LYING
+                    self.focussing = None
 
     def move_down(self):
-        pass
+        match self.state:
+            case DoubleBlockState.STANDING:
+                self.first_block.move_down(step=2)
+                self.second_block.move_down(step=1)
+
+            case DoubleBlockState.LYING:
+                self.first_block.move_down(step=1)
+                self.second_block.move_down(step=1)
+
+            case DoubleBlockState.DIVIDED:
+                if not isinstance(self.focussing, SingleBlock):
+                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+                self.focussing.move_down(step=1)
+                if manhattan_distance(self.first_block, self.second_block) == 1:
+                    self.state = DoubleBlockState.LYING
+                    self.focussing = None
 
     def move_left(self):
-        pass
+        match self.state:
+            case DoubleBlockState.STANDING:
+                self.first_block.move_left(step=2)
+                self.second_block.move_left(step=1)
+
+            case DoubleBlockState.LYING:
+                self.first_block.move_left(step=1)
+                self.second_block.move_left(step=1)
+
+            case DoubleBlockState.DIVIDED:
+                if not isinstance(self.focussing, SingleBlock):
+                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+                self.focussing.move_left(step=1)
+                if manhattan_distance(self.first_block, self.second_block) == 1:
+                    self.state = DoubleBlockState.LYING
+                    self.focussing = None
 
     def move_right(self):
-        pass
+        match self.state:
+            case DoubleBlockState.STANDING:
+                self.first_block.move_right(step=2)
+                self.second_block.move_right(step=1)
+
+            case DoubleBlockState.LYING:
+                self.first_block.move_right(step=1)
+                self.second_block.move_right(step=1)
+
+            case DoubleBlockState.DIVIDED:
+                if not isinstance(self.focussing, SingleBlock):
+                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+                self.focussing.move_right(step=1)
+                if manhattan_distance(self.first_block, self.second_block) == 1:
+                    self.state = DoubleBlockState.LYING
+                    self.focussing = None
+
+    def toggle_focussing(self):
+        if self.state == DoubleBlockState.DIVIDED:
+            if self.first_block.equals(self.focussing):
+                self.focussing = self.first_block
+            elif self.second_block.equals(self.focussing):
+                self.focussing = self.second_block
+            else:
+                raise Exception(f"Cannot toggle focussing for {self}, focussing block is invalid")
+        else:
+            raise Exception(f"Cannot toggle focussing for {self}, the state must be DIVIDED")
 
     def equals(self, block):
         if not isinstance(block, DoubleBlock):
             return False
         return (
-            self.first_block.equals(block.first_block)
-            and self.second_block.equals(block.second_block)
-            and self.focussing == self.focussing
+            self.focussing == self.focussing
             and self.state == block.state
+            and
+            (
+                (self.first_block.equals(block.first_block) and self.second_block.equals(block.second_block))
+                or
+                (self.first_block.equals(block.second_block) and self.second_block.equals(block.first_block))
+            )
         )
-
-    def toggle_focussing(self):
-        if self.first_block.equals(self.focussing):
-            self.focussing = self.first_block
-        elif self.second_block.equals(self.focussing):
-            self.focussing = self.second_block
-        else:
-            raise Exception(f"Cannot toggle focussing for {self}")
 
 
 class SingleBlock:
@@ -76,17 +146,21 @@ class SingleBlock:
         self.x_axis = x_axis
         self.y_axis = y_axis
 
-    def move_up(self):
-        pass
+    def move_up(self, step):
+        if isinstance(step, int):
+            self.y_axis += step
 
-    def move_down(self):
-        pass
+    def move_down(self, step):
+        if isinstance(step, int):
+            self.y_axis -= step
 
-    def move_left(self):
-        pass
+    def move_left(self, step):
+        if isinstance(step, int):
+            self.x_axis -= step
 
-    def move_right(self):
-        pass
+    def move_right(self, step):
+        if isinstance(step, int):
+            self.x_axis += step
 
     def equals(self, block):
         return self.x_axis == block.x_axis and self.y_axis == block.y_axis

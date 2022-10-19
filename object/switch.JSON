@@ -1,0 +1,7 @@
+{
+  "sw_type": "NORMAL/TELEPORT",
+  "type": "HEAVY/SOFT",
+  "function": "ON/OFF/TOGGLE",
+  "bridges": [1, 2],
+  "tiles": ["(1, 2)", "(0, 2)"]
+}

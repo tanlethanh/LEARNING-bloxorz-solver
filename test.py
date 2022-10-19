@@ -1,5 +1,17 @@
+class a:
+    def __init__(self):
+        self.var = 0
+
+class b(a):
+    def __init__(self):
+        super().__init__()
+        self.var2 = 0
+
+    def __init__(self, var2):
+        super().__init__()
+        self.var2 = var2
+
+    def abc(self):
+        print("hellow")
 
 
-a = "(1, 2))"
-
-print([1, 2, 3, 4].pop(0))

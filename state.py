@@ -1,5 +1,8 @@
 from enum import Enum
 from bloxorz.block import DoubleBlock, DoubleBlockState
+from bloxorz.game_board import GameBoard
+from bloxorz.switch import TeleportSwitch, NormalSwitch
+from bloxorz.tile import Tile
 
 
 class Action(Enum):
@@ -15,6 +18,8 @@ class Action(Enum):
 
 
 class State:
+
+    list_state_all_bridge: list
 
     def __init__(self, block, list_state_all_bridge, parent_state=None, parent_action=None):
 
@@ -39,17 +44,47 @@ class State:
                 and self.list_state_all_bridge == item.list_state_all_bridge
         )
 
-    def turn_up(self, bloxorz_map):
-        self.block.move_up()
+    def move(self, game_board, action):
+        if not isinstance(game_board, GameBoard):
+            raise Exception("Game board is invalid")
 
-    def turn_down(self, bloxorz_map):
-        self.block.move_down()
+        match action:
+            case Action.TURN_UP:
+                self.block.move_up()
+            case Action.TURN_DOWN:
+                self.block.move_down()
+            case Action.TURN_LEFT:
+                self.block.move_left()
+            case Action.TURN_RIGHT:
+                self.block.move_right()
+            case Action.TOGGLE_FOCUSSING:
+                self.block.toggle_focussing()
 
-    def turn_left(self, bloxorz_map):
-        self.block.move_left()
+        if not game_board.is_valid_position(self.block):
+            return None
 
-    def turn_right(self, bloxorz_map):
-        self.block.move_right()
+        set_tile = set()
+        try:
+            first_tile = game_board.map[self.block.first_block.x_axis, self.block.first_block.y_axis]
+            second_tile = game_board.map[self.block.second_block.x_axis, self.block.second_block.y_axis]
+            if not isinstance(first_tile, Tile) or not isinstance(second_tile, Tile):
+                x = self.block.first_block.x_axis
+                y = self.block.first_block.y_axis
+                raise Exception(f"Invalid tile at position ({x}, {y})")
+            else:
+                set_tile.add(first_tile)
+                set_tile.add(second_tile)
+        except Exception as e:
+            print(f"Get off the game board: {e}")
+            return None
 
-    def toggle_focussing(self, bloxorz_map):
-        self.block.toggle_focussing()
+        for tile in set_tile:
+            if isinstance(tile, TeleportSwitch):
+                tile.trigger(self.block)
+            elif isinstance(tile, NormalSwitch):
+                tile.trigger(self.block, self.list_state_all_bridge)
+
+
+
+
+

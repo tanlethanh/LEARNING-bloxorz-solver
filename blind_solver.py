@@ -49,7 +49,7 @@ class BlindSolver:
         neighbors = []
         for action in Action.list():
             next_state = self.new_state_after_take_action(current_state, action)
-            if next_state is not None and self.game_board.is_valid_position(next_state.block):
+            if next_state is not None:
                 neighbors.append(next_state)
         return neighbors
 
@@ -73,16 +73,7 @@ class BlindSolver:
             parent_action=action
         )
 
-        match action:
-            case Action.TURN_UP:
-                next_state.turn_up(self.game_board.map)
-            case Action.TURN_DOWN:
-                next_state.turn_down(self.game_board.map)
-            case Action.TURN_LEFT:
-                next_state.turn_left(self.game_board.map)
-            case Action.TURN_RIGHT:
-                next_state.turn_right(self.game_board.map)
-            case Action.TOGGLE_FOCUSSING:
-                next_state.toggle_focussing(self.game_board.map)
+        next_state.move(self.game_board, action=action)
+
         return next_state
 
