@@ -54,8 +54,8 @@ class GameBoard:
                 self.map[x][y] = NormalSwitch(
                     x,
                     y,
-                    sw["object"]["type"],
-                    sw["object"]["function"],
+                    SwitchType[sw["object"]["type"]],
+                    SwitchFunction[sw["object"]["function"]],
                     [bridge for index, bridge in enumerate(self.bridges) if index in sw["object"]["bridges"]]
                 )
 
@@ -64,7 +64,7 @@ class GameBoard:
                 second_tile = tuple(sw["object"]["tiles"][1])
                 first_tile = self.map[first_tile[0]][first_tile[1]]
                 second_tile = self.map[second_tile[0]][second_tile[1]]
-                self.map[x][y] = TeleportSwitch(x, y, sw["object"]["type"], first_tile, second_tile)
+                self.map[x][y] = TeleportSwitch(x, y, SwitchType[sw["object"]["type"]], first_tile, second_tile)
 
     def is_goal(self, block):
         if (
@@ -113,7 +113,7 @@ class GameBoard:
 
     def update_map(self, list_state_all_bridge):
         for index, bridge_state in enumerate(list_state_all_bridge):
-            for x_axis, y_axis in self.bridges[index]:
+            for x_axis, y_axis in self.bridges[index].list_tile:
                 current_tile = self.map[x_axis][y_axis]
                 if (
                         bridge_state == BridgeState.ACTIVATED and current_tile.state == TileType.OFF
