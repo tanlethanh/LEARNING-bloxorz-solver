@@ -4,7 +4,7 @@ AI SOLVER
  
 Algorithm:
  - Blind search: DFS, BrFS, BFS
- - Heuristic searhc: Genetic algorithm
+ - Heuristic search: Genetic algorithm
 
 BLOXORZ INSTRUCTIONS
 1) The aim of the game is to get the block to fall into the square hole at the end of each stage. There are 33 stages to complete.
