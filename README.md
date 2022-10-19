@@ -1,6 +1,7 @@
 # Bloxorz-AI-Solver
 AI SOLVER
  - Use search algorithm in AI to solve the game
+ 
 Algorithm:
  - Blind search: DFS, BrFS, BFS
  - Heuristic searhc: Genetic algorithm
