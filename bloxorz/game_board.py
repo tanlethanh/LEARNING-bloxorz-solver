@@ -32,6 +32,10 @@ class GameBoard:
                             map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
                         case "Goal":
                             map_col.append(Tile(x_axis, y_axis, state=TileType.GOAL))
+                        case "Orange":
+                            map_col.append(Tile(x_axis, y_axis, state=TileType.ORANGE))
+                        case _:
+                            map_col.append(Tile(x_axis, y_axis, state=TileType.INVALID))
                 elif isinstance(element, dict):
                     map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
                     list_switch.append({
