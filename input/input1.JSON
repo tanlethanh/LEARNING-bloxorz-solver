@@ -1,0 +1,12 @@
+{
+  "map": [
+    ["----", "----", "----", "----", "----", {"type":  "on", "bridges":  [0, 1]}, "Tile", "Tile", "Tile", "Tile"],
+    ["----", "----", "----", "----", "----", "Tile", "Tile", "Goal", "Tile", "Tile"],
+    ["----", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile"],
+    ["Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "----"],
+    ["Tile", "Tile", "Tile", "Tile", "Tile", "Tile", "----", "----", "----", "----"],
+    ["Tile", "Tile", "Tile", "----", "----", "----", "----", "----", "----", "----"]
+  ],
+  "bridge": [["(1, 2)", "(1, 2)"], ["(1, 2)", "(1, 2)"]],
+  "initial_position": "(1, 4)"
+}
