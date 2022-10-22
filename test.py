@@ -1,17 +1,19 @@
-class a:
-    def __init__(self):
-        self.var = 0
+import random
 
-class b(a):
-    def __init__(self):
-        super().__init__()
-        self.var2 = 0
-
-    def __init__(self, var2):
-        super().__init__()
-        self.var2 = var2
-
-    def abc(self):
-        print("hellow")
+from bloxorz.block import SingleBlock, DoubleBlock, DoubleBlockState
+from frontier import StackFrontier
+from state import Action
 
 
+
+
+frontier = StackFrontier()
+frontier.append(1)
+frontier.append(3)
+frontier.append(4)
+frontier.append(9)
+
+print(frontier.frontier)
+
+print(frontier.remove())
+print(frontier.remove())

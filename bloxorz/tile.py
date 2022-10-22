@@ -1,5 +1,7 @@
 from enum import Enum
 
+from multipledispatch import dispatch
+
 
 class TileType(Enum):
     INVALID = 0
@@ -16,15 +18,11 @@ class BridgeState(Enum):
 
 class Tile:
 
-    def __init__(self, x_axis, y_axis, **kwargs):
+    @dispatch(int, int, TileType)
+    def __init__(self, x_axis, y_axis, state):
         self.x_axis = x_axis
         self.y_axis = y_axis
-        if kwargs["state"] == "on":
-            self.state = TileType.ON
-        elif kwargs["state"] == "off":
-            self.state = TileType.OFF
-        else:
-            self.state = TileType.INVALID
+        self.state = state
 
     def toggle(self):
         if self.state == TileType.ON:

@@ -1,5 +1,7 @@
 from enum import Enum
 
+from multipledispatch import dispatch
+
 
 def manhattan_distance(f, s):
     if isinstance(f, SingleBlock) and isinstance(s, SingleBlock):
@@ -16,31 +18,45 @@ class DoubleBlockState(Enum):
 
 class DoubleBlock:
 
-    def __init__(self, **kwargs):
-        if kwargs["block"] is not None and isinstance(kwargs["block"], DoubleBlock):
-            self.first_block = SingleBlock(block=kwargs["block"].first_block)
-            self.second_block = SingleBlock(block=kwargs["block"].second_block)
-            self.state = kwargs["block"].state
-            self.focussing = kwargs["block"].state
+    @dispatch(tuple)
+    def __init__(self, position):
+        self.first_block = SingleBlock(position[0], position[1])
+        self.second_block = SingleBlock(self.first_block)
+        self.state = DoubleBlockState.STANDING
+        self.focussing = None
 
-        elif kwargs["initial_position"] is not None and isinstance(kwargs["initial_position"], DoubleBlock):
-            self.first_block = SingleBlock(x_axis=kwargs["initial_position"][0], y_axis=kwargs["initial_position"][1])
-            self.second_block = SingleBlock(block=self.first_block)
-            self.state = DoubleBlockState.STANDING
-            self.focussing = None
-
+    @dispatch(object)
+    def __init__(self, block):
+        if block is not None and isinstance(block, DoubleBlock):
+            self.first_block = SingleBlock(block.first_block)
+            self.second_block = SingleBlock(block.second_block)
+            self.state = block.state
+            self.focussing = block.state
         else:
             raise Exception("Some fields are invalid to initialize a double block")
+
+    def __str__(self) -> str:
+        return f"DB {self.state.name} f: {self.first_block} s: {self.second_block}"
 
     def move_up(self):
         match self.state:
             case DoubleBlockState.STANDING:
                 self.first_block.move_up(step=2)
                 self.second_block.move_up(step=1)
+                self.state = DoubleBlockState.LYING
 
             case DoubleBlockState.LYING:
-                self.first_block.move_up(step=1)
-                self.second_block.move_up(step=1)
+                if self.first_block.y_axis == self.second_block.y_axis:
+                    self.first_block.move_up(step=1)
+                    self.second_block.move_up(step=1)
+                elif self.first_block.y_axis > self.second_block.y_axis:
+                    self.first_block.move_up(step=1)
+                    self.second_block.move_up(step=2)
+                    self.state = DoubleBlockState.STANDING
+                else:
+                    self.first_block.move_up(step=2)
+                    self.second_block.move_up(step=1)
+                    self.state = DoubleBlockState.STANDING
 
             case DoubleBlockState.DIVIDED:
                 if not isinstance(self.focussing, SingleBlock):
@@ -55,10 +71,20 @@ class DoubleBlock:
             case DoubleBlockState.STANDING:
                 self.first_block.move_down(step=2)
                 self.second_block.move_down(step=1)
+                self.state = DoubleBlockState.LYING
 
             case DoubleBlockState.LYING:
-                self.first_block.move_down(step=1)
-                self.second_block.move_down(step=1)
+                if self.first_block.y_axis == self.second_block.y_axis:
+                    self.first_block.move_down(step=1)
+                    self.second_block.move_down(step=1)
+                elif self.first_block.y_axis > self.second_block.y_axis:
+                    self.first_block.move_down(step=2)
+                    self.second_block.move_down(step=1)
+                    self.state = DoubleBlockState.STANDING
+                else:
+                    self.first_block.move_down(step=1)
+                    self.second_block.move_down(step=2)
+                    self.state = DoubleBlockState.STANDING
 
             case DoubleBlockState.DIVIDED:
                 if not isinstance(self.focussing, SingleBlock):
@@ -73,10 +99,20 @@ class DoubleBlock:
             case DoubleBlockState.STANDING:
                 self.first_block.move_left(step=2)
                 self.second_block.move_left(step=1)
+                self.state = DoubleBlockState.LYING
 
             case DoubleBlockState.LYING:
-                self.first_block.move_left(step=1)
-                self.second_block.move_left(step=1)
+                if self.first_block.x_axis == self.second_block.x_axis:
+                    self.first_block.move_left(step=1)
+                    self.second_block.move_left(step=1)
+                elif self.first_block.x_axis > self.second_block.x_axis:
+                    self.first_block.move_left(step=2)
+                    self.second_block.move_left(step=1)
+                    self.state = DoubleBlockState.STANDING
+                else:
+                    self.first_block.move_left(step=1)
+                    self.second_block.move_left(step=2)
+                    self.state = DoubleBlockState.STANDING
 
             case DoubleBlockState.DIVIDED:
                 if not isinstance(self.focussing, SingleBlock):
@@ -91,10 +127,20 @@ class DoubleBlock:
             case DoubleBlockState.STANDING:
                 self.first_block.move_right(step=2)
                 self.second_block.move_right(step=1)
+                self.state = DoubleBlockState.LYING
 
             case DoubleBlockState.LYING:
-                self.first_block.move_right(step=1)
-                self.second_block.move_right(step=1)
+                if self.first_block.x_axis == self.second_block.x_axis:
+                    self.first_block.move_right(step=1)
+                    self.second_block.move_right(step=1)
+                elif self.first_block.x_axis > self.second_block.x_axis:
+                    self.first_block.move_right(step=1)
+                    self.second_block.move_right(step=2)
+                    self.state = DoubleBlockState.STANDING
+                else:
+                    self.first_block.move_right(step=2)
+                    self.second_block.move_right(step=1)
+                    self.state = DoubleBlockState.STANDING
 
             case DoubleBlockState.DIVIDED:
                 if not isinstance(self.focussing, SingleBlock):
@@ -132,33 +178,39 @@ class DoubleBlock:
 
 class SingleBlock:
 
-    def __init__(self, **kwargs):
-        if kwargs["block"] is not None and isinstance(kwargs["block"], SingleBlock):
-            self.x_axis = kwargs["block"].x_axis
-            self.y_axis = kwargs["block"].y_axis
-        elif kwargs["x_axis"] is not None and kwargs["y_axis"] is not None:
-            self.x_axis = int(kwargs["x_axis"])
-            self.y_axis = int(kwargs["y_axis"])
+    @dispatch(object)
+    def __init__(self, block):
+        if block is not None and isinstance(block, SingleBlock):
+            self.x_axis = block.x_axis
+            self.y_axis = block.y_axis
         else:
             raise Exception("Some fields are invalid to initialize a single block")
+
+    @dispatch(int, int)
+    def __init__(self, x_axis, y_axis):
+        self.x_axis = int(x_axis)
+        self.y_axis = int(y_axis)
+
+    def __str__(self) -> str:
+        return f"SB ({self.x_axis}, {self.y_axis})"
 
     def set_position(self, x_axis, y_axis):
         self.x_axis = x_axis
         self.y_axis = y_axis
 
-    def move_up(self, step):
+    def move_up(self, step=1):
         if isinstance(step, int):
             self.y_axis += step
 
-    def move_down(self, step):
+    def move_down(self, step=1):
         if isinstance(step, int):
             self.y_axis -= step
 
-    def move_left(self, step):
+    def move_left(self, step=1):
         if isinstance(step, int):
             self.x_axis -= step
 
-    def move_right(self, step):
+    def move_right(self, step=1):
         if isinstance(step, int):
             self.x_axis += step
 

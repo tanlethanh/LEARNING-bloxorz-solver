@@ -3,7 +3,7 @@ from enum import Enum
 from multipledispatch import dispatch
 
 from bloxorz.block import DoubleBlock, DoubleBlockState
-from tile import Tile, TileType, Bridge, BridgeState
+from bloxorz.tile import Tile, TileType, Bridge, BridgeState
 
 
 class SwitchType(Enum):
@@ -24,11 +24,11 @@ class TeleportSwitch(Tile):
         self.first_tile = None
         self.second_tile = None
 
-    def __init__(self, x_axis, y_axis, sw_type, first_tile, second_tile):
+    def __init__(self, x_axis, y_axis, first_tile, second_tile):
         if not isinstance(first_tile, Tile) or not isinstance(second_tile, Tile):
             raise Exception("Some fields are invalid to initialize TeleportSwitch")
         else:
-            super().__init__(sw_type, x_axis, y_axis)
+            super().__init__(x_axis, y_axis)
             self.first_tile = first_tile
             self.second_tile = second_tile
 

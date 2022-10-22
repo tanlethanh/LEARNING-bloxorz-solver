@@ -1,6 +1,8 @@
+from multipledispatch import dispatch
+
 from bloxorz.block import DoubleBlock, DoubleBlockState
 from bloxorz.switch import NormalSwitch, SwitchType, SwitchFunction, TeleportSwitch
-from tile import Tile, TileType, BridgeState, Bridge
+from bloxorz.tile import Tile, TileType, BridgeState, Bridge
 
 
 class GameBoard:
@@ -14,7 +16,7 @@ class GameBoard:
 
         # Get map size
         for col in map_string:
-            if len(col) > self.width:
+            if len(col) > self.height:
                 self.height = len(col)
 
         # Initialize map
@@ -25,19 +27,19 @@ class GameBoard:
             for y_axis in range(0, self.height):
                 element = map_string[x_axis][y_axis]
                 if isinstance(element, str):
-                    match map_string[x_axis][y_axis]:
-                        case "----":
-                            map_col.append(Tile(x_axis, y_axis, state=TileType.OFF))
-                        case "Tile":
-                            map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
-                        case "Goal":
-                            map_col.append(Tile(x_axis, y_axis, state=TileType.GOAL))
-                        case "Orange":
-                            map_col.append(Tile(x_axis, y_axis, state=TileType.ORANGE))
+                    match element:
+                        case "-":
+                            map_col.append(Tile(x_axis, y_axis, TileType.OFF))
+                        case "T":
+                            map_col.append(Tile(x_axis, y_axis, TileType.ON))
+                        case "G":
+                            map_col.append(Tile(x_axis, y_axis, TileType.GOAL))
+                        case "O":
+                            map_col.append(Tile(x_axis, y_axis, TileType.ORANGE))
                         case _:
-                            map_col.append(Tile(x_axis, y_axis, state=TileType.INVALID))
+                            map_col.append(Tile(x_axis, y_axis, TileType.INVALID))
                 elif isinstance(element, dict):
-                    map_col.append(Tile(x_axis, y_axis, state=TileType.ON))
+                    map_col.append(Tile(x_axis, y_axis, TileType.ON))
                     list_switch.append({
                         "position": (x_axis, y_axis),
                         "object": element
@@ -68,13 +70,21 @@ class GameBoard:
                 second_tile = tuple(sw["object"]["tiles"][1])
                 first_tile = self.map[first_tile[0]][first_tile[1]]
                 second_tile = self.map[second_tile[0]][second_tile[1]]
-                self.map[x][y] = TeleportSwitch(x, y, SwitchType[sw["object"]["type"]], first_tile, second_tile)
+                self.map[x][y] = TeleportSwitch(x, y, first_tile, second_tile)
+
+        self.print_game_board()
 
     def is_goal(self, block):
+        try:
+            current_tile = self.map[block.first_block.x_axis][block.second_block.y_axis]
+        except Exception as e:
+            print(f"Is goal: {e}")
+            return False
+
         if (
                 isinstance(block, DoubleBlock)
                 and block.state == DoubleBlockState.STANDING
-                and self.map[block.first_block.x_axis][block.second_block.y_axis] == TileType.GOAL
+                and current_tile.state == TileType.GOAL
         ):
             return True
         return False
@@ -84,6 +94,13 @@ class GameBoard:
             raise Exception(f"{block} is not a DoubleBlock!")
 
         try:
+            if (
+                block.first_block.x_axis < 0
+                or block.second_block.x_axis < 0
+                or block.first_block.y_axis < 0
+                or block.second_block.y_axis < 0
+            ):
+                raise Exception("Index is negative")
             first_tile_state = self.map[block.first_block.x_axis][block.first_block.y_axis].state
             second_tile_state = self.map[block.second_block.x_axis][block.second_block.y_axis].state
         except Exception as e:
@@ -102,13 +119,9 @@ class GameBoard:
                     return True
 
             case DoubleBlockState.LYING:
-                if (
-                    (first_tile_state == TileType.ORANGE and second_tile_state == TileType.ORANGE)
-                    or
-                    (first_tile_state == TileType.ON and second_tile_state == TileType)
-                ):
-                    return True
-                return False
+                if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
+                    return False
+                return True
 
             case DoubleBlockState.DIVIDED:
                 if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
@@ -125,3 +138,53 @@ class GameBoard:
                         bridge_state == BridgeState.NOT_ACTIVE and current_tile.state == TileType.ON
                 ):
                     current_tile.toggle()
+
+    @dispatch()
+    def print_game_board(self):
+        for y in range(0, self.height).__reversed__():
+            for x in range(0, self.width):
+                current_tile = self.map[x][y]
+                if isinstance(current_tile, NormalSwitch):
+                    print("^", end="")
+                elif isinstance(current_tile, TeleportSwitch):
+                    print("%", end="")
+                elif isinstance(current_tile, Tile):
+                    if current_tile.state == TileType.ON:
+                        print("*", end="")
+                    elif current_tile.state == TileType.OFF:
+                        print(" ", end="")
+                    elif current_tile.state == TileType.ORANGE:
+                        print("-", end="")
+                    elif current_tile.state == TileType.GOAL:
+                        print("X", end="")
+            print("")
+
+    @dispatch(DoubleBlock)
+    def print_game_board(self, block):
+        for y in range(0, self.height).__reversed__():
+            for x in range(0, self.width):
+                current_tile = self.map[x][y]
+                if (
+                        (current_tile.x_axis == block.first_block.x_axis and current_tile.y_axis == block.first_block.y_axis)
+                        or
+                        (current_tile.x_axis == block.second_block.x_axis and current_tile.y_axis == block.second_block.y_axis)
+                ):
+                    print("=", end="")
+                elif isinstance(current_tile, NormalSwitch):
+                    print("^", end="")
+                elif isinstance(current_tile, TeleportSwitch):
+                    print("%", end="")
+                elif isinstance(current_tile, Tile):
+                    if current_tile.state == TileType.ON:
+                        print("*", end="")
+                    elif current_tile.state == TileType.OFF:
+                        print(" ", end="")
+                    elif current_tile.state == TileType.ORANGE:
+                        print("-", end="")
+                    elif current_tile.state == TileType.GOAL:
+                        print("X", end="")
+            print("")
+
+
+
+

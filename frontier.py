@@ -18,13 +18,20 @@ class Frontier:
             self.frontier.append(state)
 
     def contains(self, item):
-        for index, state in self.frontier:
-            if state.equals(item):
+        for index, state in enumerate(self.frontier):
+            if state == item:
                 return True
         return False
 
     def remove(self):
         pass
+
+    def __str__(self) -> str:
+        frontier_string = "Frontier: \n"
+        for state in self.frontier:
+            frontier_string += f"\t{state.__str__()}"
+
+        return frontier_string
 
 
 class StackFrontier(Frontier):
