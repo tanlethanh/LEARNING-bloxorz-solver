@@ -7,14 +7,14 @@ from bloxorz.tile import Tile, TileType, Bridge, BridgeState
 
 
 class SwitchType(Enum):
-    SOFT = 1
-    HEAVY = 2
+    SOFT = "SOFT"
+    HEAVY = "HEAVY"
 
 
 class SwitchFunction(Enum):
-    TO_TURN_OFF = 0
-    TO_TURN_ON = 1
-    TO_TOGGLE = 2
+    OFF = "OFF"
+    ON = "ON"
+    TOGGLE = "TOGGLE"
 
 
 class TeleportSwitch(Tile):
@@ -58,7 +58,7 @@ class NormalSwitch(Tile):
                 if not isinstance(bridge, Bridge):
                     raise Exception("List of bridge are invalid to initialize NormalSwitch")
 
-            super().__init__(x_axis, y_axis)
+            super().__init__(x_axis, y_axis, TileType.ON)
             self.type = sw_type
             self.function = function
             self.bridges = bridges
@@ -70,33 +70,33 @@ class NormalSwitch(Tile):
         if self.is_matched_condition(block):
             list_index = self.get_all_index_of_bridges()
             match self.function:
-                case SwitchFunction.TO_TOGGLE:
+                case SwitchFunction.TOGGLE:
                     for index in list_index:
                         list_state_all_bridge[index] = not list_state_all_bridge[index]
 
-                case SwitchFunction.TO_TURN_ON:
+                case SwitchFunction.ON:
                     for index in list_index:
-                        if list_state_all_bridge[index] == BridgeState.NOT_ACTIVE:
+                        if not list_state_all_bridge[index]:
                             list_state_all_bridge[index] = not list_state_all_bridge[index]
 
-                case SwitchFunction.TO_TURN_OFF:
+                case SwitchFunction.OFF:
                     for index in list_index:
-                        if list_state_all_bridge[index] == BridgeState.ACTIVATED:
+                        if list_state_all_bridge[index]:
                             list_state_all_bridge[index] = not list_state_all_bridge[index]
 
     @dispatch()
     def trigger(self):
         match self.function:
-            case SwitchFunction.TO_TOGGLE:
+            case SwitchFunction.TOGGLE:
                 for bridge in self.bridges:
                     for tile in bridge.list_tile:
                         tile.toggle()
-            case SwitchFunction.TO_TURN_ON:
+            case SwitchFunction.ON:
                 for bridge in self.bridges:
                     for tile in bridge.list_tile:
                         if tile.state == TileType.OFF:
                             tile.toggle()
-            case SwitchFunction.TO_TURN_OFF:
+            case SwitchFunction.OFF:
                 for bridge in self.bridges:
                     for tile in bridge.list_tile:
                         if tile.state == TileType.ON:

@@ -32,7 +32,7 @@ class State:
             raise Exception("Some fields are not valid to initialize a State")
 
         self.block = block
-        self.list_state_all_bridge = list_state_all_bridge
+        self.list_state_all_bridge = list_state_all_bridge[:]
         self.parent_state = parent_state
         self.parent_action = parent_action
 

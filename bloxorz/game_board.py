@@ -12,7 +12,13 @@ class GameBoard:
         self.height = 0
 
         # Store bridges
-        self.bridges = [[tuple(tile_position) for tile_position in bridge] for bridge in bridges_string]
+        self.bridges = []
+        for bridge in bridges_string:
+            list_tile_index = []
+            for tile_position in bridge:
+                tile_position = tile_position.split(" ")
+                list_tile_index.append((int(tile_position[0]), int(tile_position[1])))
+            self.bridges.append(list_tile_index)
 
         # Get map size
         for col in map_string:
@@ -130,12 +136,11 @@ class GameBoard:
 
     def update_map(self, list_state_all_bridge):
         for index, bridge_state in enumerate(list_state_all_bridge):
-            for x_axis, y_axis in self.bridges[index].list_tile:
-                current_tile = self.map[x_axis][y_axis]
+            for current_tile in self.bridges[index].list_tile:
                 if (
-                        bridge_state == BridgeState.ACTIVATED and current_tile.state == TileType.OFF
+                        (bridge_state == BridgeState.ACTIVATED.value and current_tile.state == TileType.OFF)
                         or
-                        bridge_state == BridgeState.NOT_ACTIVE and current_tile.state == TileType.ON
+                        (bridge_state == BridgeState.NOT_ACTIVE.value and current_tile.state == TileType.ON)
                 ):
                     current_tile.toggle()
 

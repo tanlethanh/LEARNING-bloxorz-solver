@@ -20,18 +20,24 @@ initial_position = input_data["initial_position"]
 initial_position = initial_position.split(" ")
 initial_position = tuple(int(pos) for pos in initial_position)
 
+try:
+    state_bridges = input_data["state_bridges"]
+    state_bridges = [bool(state) for state in state_bridges]
+except Exception as e:
+    state_bridges = None
+
 # Get AI algorithm
 algorithm = sys.argv[2].upper()
 
 if algorithm == "DFS":
     stack_frontier = StackFrontier()
-    game_solver = BlindSolver(stack_frontier, game_board, initial_position)
+    game_solver = BlindSolver(stack_frontier, game_board, initial_position, state_bridges)
     res = game_solver.solve()
     print(res)
 
 elif algorithm == "BFS":
     queue_frontier = QueueFrontier()
-    game_solver = BlindSolver(queue_frontier, game_board, initial_position)
+    game_solver = BlindSolver(queue_frontier, game_board, initial_position, state_bridges)
     res = game_solver.solve()
     print(res)
 

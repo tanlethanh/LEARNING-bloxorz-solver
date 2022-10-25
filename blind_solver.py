@@ -9,12 +9,15 @@ class BlindSolver:
 
     frontier: Frontier
 
-    def __init__(self, frontier, game_board, initial_position):
+    def __init__(self, frontier, game_board, initial_position, state_brides):
         if not isinstance(frontier, Frontier) or not isinstance(game_board, GameBoard):
             raise Exception("frontier is invalid!")
 
         initial_block = DoubleBlock(initial_position)
-        list_state_of_bridges = [BridgeState.NOT_ACTIVE] * len(game_board.bridges)
+        if state_brides is None:
+            list_state_of_bridges = [False] * len(game_board.bridges)
+        else:
+            list_state_of_bridges = state_brides
         self.initial_state = State(initial_block, list_state_of_bridges)
         self.explored = []
         self.frontier = frontier
@@ -29,8 +32,6 @@ class BlindSolver:
                 print("Cannot solve!")
                 return -1
 
-            print(self.frontier)
-
             current_state = self.frontier.remove()
             if not isinstance(current_state, State):
                 raise Exception("current state is invalid")
@@ -41,11 +42,11 @@ class BlindSolver:
             # we need to update the map
             # because all State use the same map
             self.game_board.update_map(current_state.list_state_all_bridge)
+            self.game_board.print_game_board(current_state.block)
+            print(self.frontier)
 
             if self.game_board.is_goal(current_state.block):
                 return self.result(current_state)
-
-            self.game_board.print_game_board(current_state.block)
 
             # append all valid neighbors of current state to frontier
             neighbors_of_current_state = self.neighbors(current_state)
