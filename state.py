@@ -40,20 +40,12 @@ class State:
         if not isinstance(other, State):
             return False
         return (
-                self.block.equals(other.block)
+                self.block == other.block
                 and self.list_state_all_bridge == other.list_state_all_bridge
         )
 
     def __str__(self) -> str:
         return f"{self.block} <-> {self.list_state_all_bridge}\n"
-
-    def equals(self, item):
-        if not isinstance(item, State):
-            return False
-        return (
-                self.block.equals(item.block)
-                and self.list_state_all_bridge == item.list_state_all_bridge
-        )
 
     def move(self, game_board, action) -> bool:
         if not isinstance(game_board, GameBoard):

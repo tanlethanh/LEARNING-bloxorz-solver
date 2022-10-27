@@ -19,11 +19,13 @@ class SwitchFunction(Enum):
 
 class TeleportSwitch(Tile):
 
-    def __int__(self, x_axis, y_axis):
-        super().__init__(x_axis, y_axis)
+    @dispatch(int, int)
+    def __init__(self, x_axis, y_axis):
+        super().__init__(x_axis, y_axis, TileType.ON)
         self.first_tile = None
         self.second_tile = None
 
+    @dispatch(int, int, Tile, Tile)
     def __init__(self, x_axis, y_axis, first_tile, second_tile):
         if not isinstance(first_tile, Tile) or not isinstance(second_tile, Tile):
             raise Exception("Some fields are invalid to initialize TeleportSwitch")
@@ -43,9 +45,10 @@ class TeleportSwitch(Tile):
             block.second_block.set_position(self.second_tile.x_axis, self.second_tile.y_axis)
             block.state = DoubleBlockState.DIVIDED
             block.focussing = block.first_block
+            print("")
 
-        else:
-            raise Exception(f"can not trigger {block} by teleport switch {self}")
+        # else:
+        #     raise Exception(f"can not trigger {block} by teleport switch {self}")
 
 
 class NormalSwitch(Tile):

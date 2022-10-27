@@ -2,8 +2,7 @@
   "map": [
     ["T", "T", "T", "T", "T", "-"],
     ["T", "T", "T", "T", "T", "-"],
-    ["T", "T", "T",
-      {
+    ["T", "T", "T", {
   "sw_type": "NORMAL",
   "type": "SOFT",
   "function": "TOGGLE",

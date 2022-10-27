@@ -72,11 +72,14 @@ class GameBoard:
                 )
 
             elif sw["object"]["sw_type"] == "TELEPORT":
-                first_tile = tuple(sw["object"]["tiles"][0])
-                second_tile = tuple(sw["object"]["tiles"][1])
+                tiles = sw["object"]["tiles"]
+                first_tile = [int(pos) for pos in tiles[0].split(" ")]
+                second_tile = [int(pos) for pos in tiles[1].split(" ")]
+                self.map[x][y] = current_tile = TeleportSwitch(x, y)
                 first_tile = self.map[first_tile[0]][first_tile[1]]
                 second_tile = self.map[second_tile[0]][second_tile[1]]
-                self.map[x][y] = TeleportSwitch(x, y, first_tile, second_tile)
+                current_tile.first_tile = first_tile
+                current_tile.second_tile = second_tile
 
         self.print_game_board()
 

@@ -73,7 +73,7 @@ class BlindSolver:
 
     def is_explored(self, state):
         for explored_state in self.explored:
-            if state.equals(explored_state):
+            if state == explored_state:
                 return True
         return False
 
