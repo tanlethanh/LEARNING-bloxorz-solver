@@ -59,116 +59,112 @@ class DoubleBlock:
         return f"DB {self.state.name} f: {self.first_block} s: {self.second_block}"
 
     def move_up(self):
-        match self.state:
-            case DoubleBlockState.STANDING:
+        if self.state == DoubleBlockState.STANDING:
+            self.first_block.move_up(step=2)
+            self.second_block.move_up(step=1)
+            self.state = DoubleBlockState.LYING
+
+        elif self.state == DoubleBlockState.LYING:
+            if self.first_block.y_axis == self.second_block.y_axis:
+                self.first_block.move_up(step=1)
+                self.second_block.move_up(step=1)
+            elif self.first_block.y_axis > self.second_block.y_axis:
+                self.first_block.move_up(step=1)
+                self.second_block.move_up(step=2)
+                self.state = DoubleBlockState.STANDING
+            else:
                 self.first_block.move_up(step=2)
                 self.second_block.move_up(step=1)
+                self.state = DoubleBlockState.STANDING
+
+        elif self.state == DoubleBlockState.DIVIDED:
+            if not isinstance(self.focussing, SingleBlock):
+                raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+            self.focussing.move_up(step=1)
+            if manhattan_distance(self.first_block, self.second_block) == 1:
                 self.state = DoubleBlockState.LYING
-
-            case DoubleBlockState.LYING:
-                if self.first_block.y_axis == self.second_block.y_axis:
-                    self.first_block.move_up(step=1)
-                    self.second_block.move_up(step=1)
-                elif self.first_block.y_axis > self.second_block.y_axis:
-                    self.first_block.move_up(step=1)
-                    self.second_block.move_up(step=2)
-                    self.state = DoubleBlockState.STANDING
-                else:
-                    self.first_block.move_up(step=2)
-                    self.second_block.move_up(step=1)
-                    self.state = DoubleBlockState.STANDING
-
-            case DoubleBlockState.DIVIDED:
-                if not isinstance(self.focussing, SingleBlock):
-                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
-                self.focussing.move_up(step=1)
-                if manhattan_distance(self.first_block, self.second_block) == 1:
-                    self.state = DoubleBlockState.LYING
-                    self.focussing = None
+                self.focussing = None
 
     def move_down(self):
-        match self.state:
-            case DoubleBlockState.STANDING:
+        if self.state == DoubleBlockState.STANDING:
+            self.first_block.move_down(step=2)
+            self.second_block.move_down(step=1)
+            self.state = DoubleBlockState.LYING
+
+        elif self.state == DoubleBlockState.LYING:
+            if self.first_block.y_axis == self.second_block.y_axis:
+                self.first_block.move_down(step=1)
+                self.second_block.move_down(step=1)
+            elif self.first_block.y_axis > self.second_block.y_axis:
                 self.first_block.move_down(step=2)
                 self.second_block.move_down(step=1)
+                self.state = DoubleBlockState.STANDING
+            else:
+                self.first_block.move_down(step=1)
+                self.second_block.move_down(step=2)
+                self.state = DoubleBlockState.STANDING
+
+        elif self.state == DoubleBlockState.DIVIDED:
+            if not isinstance(self.focussing, SingleBlock):
+                raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+            self.focussing.move_down(step=1)
+            if manhattan_distance(self.first_block, self.second_block) == 1:
                 self.state = DoubleBlockState.LYING
-
-            case DoubleBlockState.LYING:
-                if self.first_block.y_axis == self.second_block.y_axis:
-                    self.first_block.move_down(step=1)
-                    self.second_block.move_down(step=1)
-                elif self.first_block.y_axis > self.second_block.y_axis:
-                    self.first_block.move_down(step=2)
-                    self.second_block.move_down(step=1)
-                    self.state = DoubleBlockState.STANDING
-                else:
-                    self.first_block.move_down(step=1)
-                    self.second_block.move_down(step=2)
-                    self.state = DoubleBlockState.STANDING
-
-            case DoubleBlockState.DIVIDED:
-                if not isinstance(self.focussing, SingleBlock):
-                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
-                self.focussing.move_down(step=1)
-                if manhattan_distance(self.first_block, self.second_block) == 1:
-                    self.state = DoubleBlockState.LYING
-                    self.focussing = None
+                self.focussing = None
 
     def move_left(self):
-        match self.state:
-            case DoubleBlockState.STANDING:
+        if self.state == DoubleBlockState.STANDING:
+            self.first_block.move_left(step=2)
+            self.second_block.move_left(step=1)
+            self.state = DoubleBlockState.LYING
+
+        elif self.state == DoubleBlockState.LYING:
+            if self.first_block.x_axis == self.second_block.x_axis:
+                self.first_block.move_left(step=1)
+                self.second_block.move_left(step=1)
+            elif self.first_block.x_axis > self.second_block.x_axis:
                 self.first_block.move_left(step=2)
                 self.second_block.move_left(step=1)
+                self.state = DoubleBlockState.STANDING
+            else:
+                self.first_block.move_left(step=1)
+                self.second_block.move_left(step=2)
+                self.state = DoubleBlockState.STANDING
+
+        elif self.state == DoubleBlockState.DIVIDED:
+            if not isinstance(self.focussing, SingleBlock):
+                raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+            self.focussing.move_left(step=1)
+            if manhattan_distance(self.first_block, self.second_block) == 1:
                 self.state = DoubleBlockState.LYING
-
-            case DoubleBlockState.LYING:
-                if self.first_block.x_axis == self.second_block.x_axis:
-                    self.first_block.move_left(step=1)
-                    self.second_block.move_left(step=1)
-                elif self.first_block.x_axis > self.second_block.x_axis:
-                    self.first_block.move_left(step=2)
-                    self.second_block.move_left(step=1)
-                    self.state = DoubleBlockState.STANDING
-                else:
-                    self.first_block.move_left(step=1)
-                    self.second_block.move_left(step=2)
-                    self.state = DoubleBlockState.STANDING
-
-            case DoubleBlockState.DIVIDED:
-                if not isinstance(self.focussing, SingleBlock):
-                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
-                self.focussing.move_left(step=1)
-                if manhattan_distance(self.first_block, self.second_block) == 1:
-                    self.state = DoubleBlockState.LYING
-                    self.focussing = None
+                self.focussing = None
 
     def move_right(self):
-        match self.state:
-            case DoubleBlockState.STANDING:
+        if self.state == DoubleBlockState.STANDING:
+            self.first_block.move_right(step=2)
+            self.second_block.move_right(step=1)
+            self.state = DoubleBlockState.LYING
+
+        elif self.state == DoubleBlockState.LYING:
+            if self.first_block.x_axis == self.second_block.x_axis:
+                self.first_block.move_right(step=1)
+                self.second_block.move_right(step=1)
+            elif self.first_block.x_axis > self.second_block.x_axis:
+                self.first_block.move_right(step=1)
+                self.second_block.move_right(step=2)
+                self.state = DoubleBlockState.STANDING
+            else:
                 self.first_block.move_right(step=2)
                 self.second_block.move_right(step=1)
+                self.state = DoubleBlockState.STANDING
+
+        elif self.state == DoubleBlockState.DIVIDED:
+            if not isinstance(self.focussing, SingleBlock):
+                raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
+            self.focussing.move_right(step=1)
+            if manhattan_distance(self.first_block, self.second_block) == 1:
                 self.state = DoubleBlockState.LYING
-
-            case DoubleBlockState.LYING:
-                if self.first_block.x_axis == self.second_block.x_axis:
-                    self.first_block.move_right(step=1)
-                    self.second_block.move_right(step=1)
-                elif self.first_block.x_axis > self.second_block.x_axis:
-                    self.first_block.move_right(step=1)
-                    self.second_block.move_right(step=2)
-                    self.state = DoubleBlockState.STANDING
-                else:
-                    self.first_block.move_right(step=2)
-                    self.second_block.move_right(step=1)
-                    self.state = DoubleBlockState.STANDING
-
-            case DoubleBlockState.DIVIDED:
-                if not isinstance(self.focussing, SingleBlock):
-                    raise Exception(f"Focussing block must be SingleBlock when {self} is DIVIDED")
-                self.focussing.move_right(step=1)
-                if manhattan_distance(self.first_block, self.second_block) == 1:
-                    self.state = DoubleBlockState.LYING
-                    self.focussing = None
+                self.focussing = None
 
     def toggle_focussing(self):
         if self.state == DoubleBlockState.DIVIDED:

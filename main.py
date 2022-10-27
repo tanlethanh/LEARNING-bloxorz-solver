@@ -29,15 +29,16 @@ except Exception as e:
 # Get AI algorithm
 algorithm = sys.argv[2].upper()
 
+frontier = None
 if algorithm == "DFS":
-    stack_frontier = StackFrontier()
-    game_solver = BlindSolver(stack_frontier, game_board, initial_position, state_bridges)
-    res = game_solver.solve()
-    print(res)
+    frontier = StackFrontier()
 
 elif algorithm == "BFS":
-    queue_frontier = QueueFrontier()
-    game_solver = BlindSolver(queue_frontier, game_board, initial_position, state_bridges)
-    res = game_solver.solve()
-    print(res)
+    frontier = QueueFrontier()
+
+game_solver = BlindSolver(frontier, game_board, initial_position, state_bridges)
+res = game_solver.solve()
+print(f"Number of discovered state: {len(game_solver.explored)}")
+print(f"Number of step: {len(res)}")
+print(res)
 

@@ -52,7 +52,6 @@ class TeleportSwitch(Tile):
 
 
 class NormalSwitch(Tile):
-
     bridges: list[Bridge]
 
     def __init__(self, x_axis, y_axis, sw_type, function, bridges):
@@ -72,38 +71,36 @@ class NormalSwitch(Tile):
     def trigger(self, block, list_state_all_bridge):
         if self.is_matched_condition(block):
             list_index = self.get_all_index_of_bridges()
-            match self.function:
-                case SwitchFunction.TOGGLE:
-                    for index in list_index:
+            if self.function == SwitchFunction.TOGGLE:
+                for index in list_index:
+                    list_state_all_bridge[index] = not list_state_all_bridge[index]
+
+            elif self.function == SwitchFunction.ON:
+                for index in list_index:
+                    if not list_state_all_bridge[index]:
                         list_state_all_bridge[index] = not list_state_all_bridge[index]
 
-                case SwitchFunction.ON:
-                    for index in list_index:
-                        if not list_state_all_bridge[index]:
-                            list_state_all_bridge[index] = not list_state_all_bridge[index]
-
-                case SwitchFunction.OFF:
-                    for index in list_index:
-                        if list_state_all_bridge[index]:
-                            list_state_all_bridge[index] = not list_state_all_bridge[index]
+            elif self.function == SwitchFunction.OFF:
+                for index in list_index:
+                    if list_state_all_bridge[index]:
+                        list_state_all_bridge[index] = not list_state_all_bridge[index]
 
     @dispatch()
     def trigger(self):
-        match self.function:
-            case SwitchFunction.TOGGLE:
-                for bridge in self.bridges:
-                    for tile in bridge.list_tile:
+        if self.function == SwitchFunction.TOGGLE:
+            for bridge in self.bridges:
+                for tile in bridge.list_tile:
+                    tile.toggle()
+        elif self.function == SwitchFunction.ON:
+            for bridge in self.bridges:
+                for tile in bridge.list_tile:
+                    if tile.state == TileType.OFF:
                         tile.toggle()
-            case SwitchFunction.ON:
-                for bridge in self.bridges:
-                    for tile in bridge.list_tile:
-                        if tile.state == TileType.OFF:
-                            tile.toggle()
-            case SwitchFunction.OFF:
-                for bridge in self.bridges:
-                    for tile in bridge.list_tile:
-                        if tile.state == TileType.ON:
-                            tile.toggle()
+        elif self.function == SwitchFunction.OFF:
+            for bridge in self.bridges:
+                for tile in bridge.list_tile:
+                    if tile.state == TileType.ON:
+                        tile.toggle()
 
     def get_all_index_of_bridges(self):
         list_index = []
@@ -117,20 +114,20 @@ class NormalSwitch(Tile):
         return (
                 # check condition of block to trigger this switch
                 (
-                        # condition of heavy switch
-                        self.type == SwitchType.HEAVY
-                        and block.state == DoubleBlockState.STANDING
-                        and block.first_block.x_axis == self.x_axis
-                        and block.first_block.y_axis == self.y_axis
+                    # condition of heavy switch
+                    self.type == SwitchType.HEAVY
+                    and block.state == DoubleBlockState.STANDING
+                    and block.first_block.x_axis == self.x_axis
+                    and block.first_block.y_axis == self.y_axis
                 )
                 or
                 (
-                        # condition of soft switch
-                        self.type == SwitchType.SOFT
-                        and (
-                                (block.first_block.x_axis == self.x_axis and block.first_block.y_axis == self.y_axis)
-                                or
-                                (block.second_block.x_axis == self.x_axis and block.second_block.y_axis == self.y_axis)
-                        )
+                    # condition of soft switch
+                    self.type == SwitchType.SOFT
+                    and (
+                            (block.first_block.x_axis == self.x_axis and block.first_block.y_axis == self.y_axis)
+                            or
+                            (block.second_block.x_axis == self.x_axis and block.second_block.y_axis == self.y_axis)
+                    )
                 )
         )

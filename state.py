@@ -51,17 +51,16 @@ class State:
         if not isinstance(game_board, GameBoard):
             raise Exception("Game board is invalid")
 
-        match action:
-            case Action.TURN_UP:
-                self.block.move_up()
-            case Action.TURN_DOWN:
-                self.block.move_down()
-            case Action.TURN_LEFT:
-                self.block.move_left()
-            case Action.TURN_RIGHT:
-                self.block.move_right()
-            case Action.TOGGLE_FOCUSSING:
-                self.block.toggle_focussing()
+        if action == Action.TURN_UP:
+            self.block.move_up()
+        elif action == Action.TURN_DOWN:
+            self.block.move_down()
+        elif action == Action.TURN_LEFT:
+            self.block.move_left()
+        elif action == Action.TURN_RIGHT:
+            self.block.move_right()
+        elif action == Action.TOGGLE_FOCUSSING:
+            self.block.toggle_focussing()
 
         if not game_board.is_valid_position(self.block):
             return False

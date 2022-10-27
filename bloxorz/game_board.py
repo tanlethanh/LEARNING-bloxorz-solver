@@ -33,17 +33,16 @@ class GameBoard:
             for y_axis in range(0, self.height):
                 element = map_string[x_axis][y_axis]
                 if isinstance(element, str):
-                    match element:
-                        case "-":
-                            map_col.append(Tile(x_axis, y_axis, TileType.OFF))
-                        case "T":
-                            map_col.append(Tile(x_axis, y_axis, TileType.ON))
-                        case "G":
-                            map_col.append(Tile(x_axis, y_axis, TileType.GOAL))
-                        case "O":
-                            map_col.append(Tile(x_axis, y_axis, TileType.ORANGE))
-                        case _:
-                            map_col.append(Tile(x_axis, y_axis, TileType.INVALID))
+                    if element == "-":
+                        map_col.append(Tile(x_axis, y_axis, TileType.OFF))
+                    elif element == "T":
+                        map_col.append(Tile(x_axis, y_axis, TileType.ON))
+                    elif element == "G":
+                        map_col.append(Tile(x_axis, y_axis, TileType.GOAL))
+                    elif element == "O":
+                        map_col.append(Tile(x_axis, y_axis, TileType.ORANGE))
+                    else:
+                        map_col.append(Tile(x_axis, y_axis, TileType.INVALID))
                 elif isinstance(element, dict):
                     map_col.append(Tile(x_axis, y_axis, TileType.ON))
                     list_switch.append({
@@ -104,10 +103,10 @@ class GameBoard:
 
         try:
             if (
-                block.first_block.x_axis < 0
-                or block.second_block.x_axis < 0
-                or block.first_block.y_axis < 0
-                or block.second_block.y_axis < 0
+                    block.first_block.x_axis < 0
+                    or block.second_block.x_axis < 0
+                    or block.first_block.y_axis < 0
+                    or block.second_block.y_axis < 0
             ):
                 raise Exception("Index is negative")
             first_tile_state = self.map[block.first_block.x_axis][block.first_block.y_axis].state
@@ -116,26 +115,25 @@ class GameBoard:
             print(f"Out of map: {e}")
             return False
 
-        match block.state:
-            case DoubleBlockState.STANDING:
-                if (
-                        first_tile_state == TileType.OFF
-                        or first_tile_state == TileType.INVALID
-                        or first_tile_state == TileType.ORANGE
-                ):
-                    return False
-                else:
-                    return True
-
-            case DoubleBlockState.LYING:
-                if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
-                    return False
+        if block.state == DoubleBlockState.STANDING:
+            if (
+                    first_tile_state == TileType.OFF
+                    or first_tile_state == TileType.INVALID
+                    or first_tile_state == TileType.ORANGE
+            ):
+                return False
+            else:
                 return True
 
-            case DoubleBlockState.DIVIDED:
-                if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
-                    return False
-                return True
+        elif block.state == DoubleBlockState.LYING:
+            if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
+                return False
+            return True
+
+        elif block.state == DoubleBlockState.DIVIDED:
+            if first_tile_state == TileType.OFF or second_tile_state == TileType.OFF:
+                return False
+            return True
 
     def update_map(self, list_state_all_bridge):
         for index, bridge_state in enumerate(list_state_all_bridge):
@@ -173,9 +171,11 @@ class GameBoard:
             for x in range(0, self.width):
                 current_tile = self.map[x][y]
                 if (
-                        (current_tile.x_axis == block.first_block.x_axis and current_tile.y_axis == block.first_block.y_axis)
+                        (
+                                current_tile.x_axis == block.first_block.x_axis and current_tile.y_axis == block.first_block.y_axis)
                         or
-                        (current_tile.x_axis == block.second_block.x_axis and current_tile.y_axis == block.second_block.y_axis)
+                        (
+                                current_tile.x_axis == block.second_block.x_axis and current_tile.y_axis == block.second_block.y_axis)
                 ):
                     print("=", end="")
                 elif isinstance(current_tile, NormalSwitch):
@@ -192,7 +192,3 @@ class GameBoard:
                     elif current_tile.state == TileType.GOAL:
                         print("X", end="")
             print("")
-
-
-
-
