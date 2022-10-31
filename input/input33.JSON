@@ -1,0 +1,22 @@
+{
+  "map":[
+    ["T", "T", "T", "T", "-", "-", "T", "T", "-", "-"],
+    ["T", "T", "G", "T", "-", "-", "T", "T", "-", "-"],
+    ["T", "T", "T", "T", "-", "-", "T", "T", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "T", "T", "T", "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T"],
+    ["-", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T", "T", "T", "T", "T"],
+    ["-", "T", "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}],
+    ["-", "-", "-", "T", "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T"],
+    ["-", "-", "-", "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T"],
+    ["-", "-", "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T"],
+    ["-", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T", "T", "T"],
+    ["T", "T", "T", "T", "T", "T", "T", "T", "-", "-"],
+    ["T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "OFF", "bridges": [1]}, "T", "-", "-"],
+    ["T", "T", {"sw_type": "NORMAL", "type": "SOFT", "function": "ON", "bridges": [2]}, "T", "-", "-", "-", "-", "-", "-"]
+  ],
+  "bridges": [["3 6", "4 6"], ["3 2", "4 2"], ["11 8"]],
+  "state_bridges": [1, 1, 0],
+  "initial_position": "1 6"
+}
