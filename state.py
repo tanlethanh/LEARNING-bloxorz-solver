@@ -12,10 +12,6 @@ class Action(Enum):
     TURN_DOWN = "TURN_DOWN"
     TOGGLE_FOCUSSING = "TOGGLE_FOCUSSING"
 
-    @classmethod
-    def list(cls):
-        return list(map(lambda c: c, cls))
-
 
 class State:
 
