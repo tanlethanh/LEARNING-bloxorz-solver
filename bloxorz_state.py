@@ -50,6 +50,12 @@ class BloxorzState(State):
     def __str__(self) -> str:
         return f"{self.block} <-> {self.list_state_all_bridge}\n"
 
+    def print_game_state(self):
+        print(f"Parent state: {self.parent}\t -- {self.parent_action} --> {self}")
+        self.game_board.update_map(self.list_state_all_bridge)
+        self.game_board.print_game_board(self.block)
+        print("-------------------------------------------------")
+
     def is_goal(self) -> bool:
         self.game_board.update_map(self.list_state_all_bridge)
         return self.game_board.is_goal(self.block)
@@ -62,15 +68,7 @@ class BloxorzState(State):
             is_valid_state = new_state.take_action(action)
             if is_valid_state:
                 neighbours.append(new_state)
-                print(self.block)
-                print(action)
-                print(new_state.list_state_all_bridge)
-                print(id(new_state.list_state_all_bridge))
-                self.game_board.update_map(new_state.list_state_all_bridge)
-                self.game_board.print_game_board(new_state.block)
-                print(self.game_board.is_valid_position(new_state.block))
-                print(new_state.block)
-                print("-------------------------------")
+                new_state.print_game_state()
         return neighbours
 
     def take_action(self, action) -> bool:
@@ -116,3 +114,5 @@ class BloxorzState(State):
             return False
 
         return True
+
+
