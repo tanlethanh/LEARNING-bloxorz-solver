@@ -42,7 +42,10 @@ elif algorithm == "BFS":
 initial_state = BloxorzState(DoubleBlock(initial_position), state_bridges, game_board)
 game_solver = Solver(frontier, initial_state)
 res = game_solver.solve()
-print(f"Number of discovered state: {len(game_solver.explored)}")
-print(f"Number of step: {len(res)}")
-print(res)
+if res is not None:
+    print(f"Number of discovered state: {len(game_solver.explored)}")
+    print(f"Number of step: {len(res)}")
+    print(res)
+else:
+    print("Cannot solve!")
 

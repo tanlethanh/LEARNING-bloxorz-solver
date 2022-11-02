@@ -62,6 +62,15 @@ class BloxorzState(State):
             is_valid_state = new_state.take_action(action)
             if is_valid_state:
                 neighbours.append(new_state)
+                print(self.block)
+                print(action)
+                print(new_state.list_state_all_bridge)
+                print(id(new_state.list_state_all_bridge))
+                self.game_board.update_map(new_state.list_state_all_bridge)
+                self.game_board.print_game_board(new_state.block)
+                print(self.game_board.is_valid_position(new_state.block))
+                print(new_state.block)
+                print("-------------------------------")
         return neighbours
 
     def take_action(self, action) -> bool:
@@ -83,9 +92,6 @@ class BloxorzState(State):
 
         # Check position of block in the game board
         self.game_board.update_map(self.list_state_all_bridge)
-        self.game_board.print_game_board(self.block)
-        print(self.game_board.is_valid_position(self.block))
-        print("-------------------------------")
         if not self.game_board.is_valid_position(self.block):
             return False
 
@@ -94,13 +100,17 @@ class BloxorzState(State):
             tiles = []
             x_1, y_1 = self.block.first_block.get_position()
             x_2, y_2 = self.block.second_block.get_position()
-            tiles.append(self.game_board.map[x_1][y_1])
-            tiles.append(self.game_board.map[x_2][y_2])
+            tile_1 = self.game_board.map[x_1][y_1]
+            tile_2 = self.game_board.map[x_2][y_2]
+            tiles.append(tile_1)
+            if tile_2 != tile_1:
+                tiles.append(tile_2)
             for tile in tiles:
                 if isinstance(tile, TeleportSwitch):
                     tile.trigger(self.block)
                 elif isinstance(tile, NormalSwitch):
                     tile.trigger(self.block, self.list_state_all_bridge)
+                    print(f"Trigger {tile.x_axis, tile.y_axis}")
         except Exception as e:
             print(f"Get off the game board: {e}")
             return False
