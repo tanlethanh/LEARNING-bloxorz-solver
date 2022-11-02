@@ -3,7 +3,7 @@ from enum import Enum
 from bloxorz.block import DoubleBlock
 from bloxorz.game_board import GameBoard
 from bloxorz.switch import TeleportSwitch, NormalSwitch
-from genetic_solver import Chromosome
+from aisolver.genetic.solver import Chromosome
 from utils import manhattan_distance
 
 

@@ -9,7 +9,7 @@ from bloxorz.block import DoubleBlock
 from bloxorz_state import BloxorzState
 from bloxorz_chromosome import BlockAction, BloxorzChromosome
 from bloxorz.game_board import GameBoard
-from genetic_solver import Population, GeneticSolver
+from aisolver.genetic.solver import Population, GeneticSolver
 
 if len(sys.argv) != 3 and len(sys.argv) != 6:
     print("arguments: [input file name] [algorithm]")
