@@ -2,12 +2,8 @@ from enum import Enum
 
 from multipledispatch import dispatch
 
-
-def manhattan_distance(f, s):
-    if isinstance(f, SingleBlock) and isinstance(s, SingleBlock):
-        return abs(f.x_axis - s.x_axis) + abs(f.y_axis - s.y_axis)
-    elif isinstance(f, tuple) and isinstance(s, tuple):
-        return abs(f[0] - s[0]) + abs(f[1] - s[1])
+from bloxorz.single_block import SingleBlock
+from utils import manhattan_distance
 
 
 class DoubleBlockState(Enum):
@@ -17,6 +13,11 @@ class DoubleBlockState(Enum):
 
 
 class DoubleBlock:
+
+    first_block: SingleBlock
+    second_block: SingleBlock
+    state: DoubleBlockState
+    # focussing: SingleBlock
 
     @dispatch(tuple)
     def __init__(self, position):
@@ -176,51 +177,4 @@ class DoubleBlock:
                 raise Exception(f"Cannot toggle focussing for {self}, focussing block is invalid")
         else:
             raise Exception(f"Cannot toggle focussing for {self}, the state must be DIVIDED")
-
-
-class SingleBlock:
-
-    @dispatch(object)
-    def __init__(self, block):
-        if block is not None and isinstance(block, SingleBlock):
-            self.x_axis = block.x_axis
-            self.y_axis = block.y_axis
-        else:
-            raise Exception("Some fields are invalid to initialize a single block")
-
-    @dispatch(int, int)
-    def __init__(self, x_axis, y_axis):
-        self.x_axis = int(x_axis)
-        self.y_axis = int(y_axis)
-
-    def __str__(self) -> str:
-        return f"SB ({self.x_axis}, {self.y_axis} -- add: {id(self)})"
-
-    def __eq__(self, o) -> bool:
-        if not isinstance(o, SingleBlock):
-            return False
-        return self.x_axis == o.x_axis and self.y_axis == o.y_axis
-
-    def set_position(self, x_axis, y_axis):
-        self.x_axis = x_axis
-        self.y_axis = y_axis
-
-    def get_position(self) -> tuple:
-        return self.x_axis, self.y_axis
-
-    def move_up(self, step=1):
-        if isinstance(step, int):
-            self.y_axis += step
-
-    def move_down(self, step=1):
-        if isinstance(step, int):
-            self.y_axis -= step
-
-    def move_left(self, step=1):
-        if isinstance(step, int):
-            self.x_axis -= step
-
-    def move_right(self, step=1):
-        if isinstance(step, int):
-            self.x_axis += step
 

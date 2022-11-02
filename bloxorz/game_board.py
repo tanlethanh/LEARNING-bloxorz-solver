@@ -38,7 +38,9 @@ class GameBoard:
                     elif element == "T":
                         map_col.append(Tile(x_axis, y_axis, TileType.ON))
                     elif element == "G":
-                        map_col.append(Tile(x_axis, y_axis, TileType.GOAL))
+                        self.goal_tile = Tile(x_axis, y_axis, TileType.GOAL)
+                        map_col.append(self.goal_tile)
+
                     elif element == "O":
                         map_col.append(Tile(x_axis, y_axis, TileType.ORANGE))
                     else:
@@ -97,6 +99,9 @@ class GameBoard:
             return True
         return False
 
+    def get_goal_position(self) -> tuple:
+        return self.goal_tile.x_axis, self.goal_tile.y_axis
+
     def is_valid_position(self, block):
         if not isinstance(block, DoubleBlock):
             raise Exception(f"{block} is not a DoubleBlock!")
@@ -112,7 +117,7 @@ class GameBoard:
             first_tile_state = self.map[block.first_block.x_axis][block.first_block.y_axis].state
             second_tile_state = self.map[block.second_block.x_axis][block.second_block.y_axis].state
         except Exception as e:
-            print(f"Out of map: {e}")
+            # print(f"Out of map: {e}")
             return False
 
         if block.state == DoubleBlockState.STANDING:
