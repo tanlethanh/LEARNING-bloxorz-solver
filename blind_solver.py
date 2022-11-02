@@ -2,7 +2,7 @@ from bloxorz.block import DoubleBlock, DoubleBlockState
 from bloxorz.game_board import GameBoard
 from bloxorz.tile import BridgeState
 from frontier import Frontier
-from state import State, Action
+from bloxorz_state import BloxorzState, Action
 
 
 class BlindSolver:
@@ -18,7 +18,7 @@ class BlindSolver:
             list_state_of_bridges = [False] * len(game_board.bridges)
         else:
             list_state_of_bridges = state_brides
-        self.initial_state = State(initial_block, list_state_of_bridges)
+        self.initial_state = BloxorzState(initial_block, list_state_of_bridges)
         self.explored = []
         self.frontier = frontier
         self.game_board = game_board
@@ -33,7 +33,7 @@ class BlindSolver:
                 return -1
 
             current_state = self.frontier.remove()
-            if not isinstance(current_state, State):
+            if not isinstance(current_state, BloxorzState):
                 raise Exception("current state is invalid")
 
             # add to explored list
@@ -84,7 +84,7 @@ class BlindSolver:
         if current_state.block.state != DoubleBlockState.DIVIDED and action == Action.TOGGLE_FOCUSSING:
             return None
 
-        next_state = State(
+        next_state = BloxorzState(
             block=DoubleBlock(current_state.block),
             list_state_all_bridge=current_state.list_state_all_bridge,
             parent_state=current_state,

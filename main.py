@@ -1,8 +1,10 @@
 import json
 import sys
 
-from blind_solver import BlindSolver
-from frontier import StackFrontier, QueueFrontier
+from aisolver.blind.frontier import StackFrontier, QueueFrontier
+from aisolver.blind.solver import Solver
+from bloxorz.block import DoubleBlock
+from bloxorz_state import BloxorzState
 from bloxorz.game_board import GameBoard
 
 if len(sys.argv) != 3:
@@ -24,7 +26,8 @@ try:
     state_bridges = input_data["state_bridges"]
     state_bridges = [bool(state) for state in state_bridges]
 except Exception as e:
-    state_bridges = None
+    print(e)
+    state_bridges = [False] * len(game_board.bridges)
 
 # Get AI algorithm
 algorithm = sys.argv[2].upper()
@@ -36,9 +39,13 @@ if algorithm == "DFS":
 elif algorithm == "BFS":
     frontier = QueueFrontier()
 
-game_solver = BlindSolver(frontier, game_board, initial_position, state_bridges)
+initial_state = BloxorzState(DoubleBlock(initial_position), state_bridges, game_board)
+game_solver = Solver(frontier, initial_state)
 res = game_solver.solve()
-print(f"Number of discovered state: {len(game_solver.explored)}")
-print(f"Number of step: {len(res)}")
-print(res)
+if res is not None:
+    print(f"Number of discovered state: {len(game_solver.explored)}")
+    print(f"Number of step: {len(res)}")
+    print(res)
+else:
+    print("Cannot solve!")
 
