@@ -1,7 +1,7 @@
 __pycache__/
 aisolver/blind/__pycache__/
+aisolver/genetic/__pycache__/
 bloxorz/__pycache__/
 .idea/
 venv/
 aisolver/.gitignore
-aisolver/
