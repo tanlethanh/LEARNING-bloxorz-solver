@@ -103,6 +103,5 @@ class GeneticSolver:
                     chromosome.mutation()
                 fitness_score = chromosome.calculate_fitness()
                 self.population.update_best_fitness_score(fitness_score)
-
         return [chromosome for chromosome in self.population.list_chromosome
                 if chromosome.fitness_score == self.goal_fitness_score]

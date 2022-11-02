@@ -1,6 +1,7 @@
 import json
 import random
 import sys
+import time
 
 from blind_solver import BlindSolver
 from bloxorz.block import DoubleBlock
@@ -65,8 +66,16 @@ elif algorithm == "GENETIC":
         list_chromosome.append(new_chromosome)
 
     initial_population = Population("MINIMIZE", list_chromosome)
+    mutation_chance = float(sys.argv[5])
 
-    genetic_solver = GeneticSolver(float(sys.argv[5]), 0, initial_population)
+    genetic_solver = GeneticSolver(mutation_chance, 0, initial_population)
+
+    start = time.time()
     goal_chromosome = genetic_solver.solve()
+    end = time.time()
+
+    print(f"Algorithm: {algorithm} \t Input: {input_file}")
+    print(f"Population size: {population_size} \t- Chromosome length: {chromosome_size}\t - Mutation chance: {mutation_chance}")
+    print(f"Time to solve: {end - start}")
     for ele in goal_chromosome:
         print(ele)

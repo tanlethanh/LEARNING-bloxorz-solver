@@ -173,9 +173,9 @@ class DoubleBlock:
                 self.focussing = self.second_block
             elif self.second_block == self.focussing:
                 self.focussing = self.first_block
-            # else:
-                # print(f"Cannot toggle focussing for {self}, focussing block is invalid")
-        # else:
-        #     print(f"Cannot toggle focussing for {self}, the state must be DIVIDED")
+            else:
+                raise Exception(f"Cannot toggle focussing for {self}, focussing block is invalid")
+        else:
+            raise Exception(f"Cannot toggle focussing for {self}, the state must be DIVIDED")
 
 
