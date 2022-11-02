@@ -75,6 +75,7 @@ class BloxorzChromosome (Chromosome):
         )
 
         self.fitness_score += distance_1 + distance_2
+        return self.fitness_score
 
 
 

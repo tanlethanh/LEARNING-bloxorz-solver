@@ -31,7 +31,7 @@ class Chromosome:
         random_node = self.available_node_type[random.randint(0, len(self.available_node_type) - 1)]
         self.DNA[random_index] = random_node
 
-    def calculate_fitness(self):
+    def calculate_fitness(self) -> int:
         pass
 
 
@@ -76,6 +76,12 @@ class Population:
             self.list_chromosome[index + 1].DNA = second_dna
             index += 2
 
+    def update_best_fitness_score(self, fitness_score):
+        if self.fitness_objective == "MINIMIZE" and fitness_score < self.best_fitness_score:
+            self.best_fitness_score = fitness_score
+        elif self.fitness_objective == "MAXIMIZE" and fitness_score > self.best_fitness_score:
+            self.best_fitness_score = fitness_score
+
 
 class GeneticSolver:
     population: Population
@@ -87,19 +93,16 @@ class GeneticSolver:
 
     def solve(self):
         while self.population.best_fitness_score != self.goal_fitness_score:
-
             self.population.selection()
-
             print(f"Best fitness score: {self.population.best_fitness_score}")
-            # print(self.population)
-
             self.population.cross_over()
-
             chance_random = random.Random()
+
             for chromosome in self.population.list_chromosome:
                 if self.MUTATION_CHANCE > chance_random.random():
                     chromosome.mutation()
-                chromosome.calculate_fitness()
+                fitness_score = chromosome.calculate_fitness()
+                self.population.update_best_fitness_score(fitness_score)
 
         return [chromosome for chromosome in self.population.list_chromosome
                 if chromosome.fitness_score == self.goal_fitness_score]
