@@ -28,6 +28,9 @@ class SingleBlock:
         self.x_axis = x_axis
         self.y_axis = y_axis
 
+    def get_position(self):
+        return self.x_axis, self.y_axis
+
     def move_up(self, step=1):
         if isinstance(step, int):
             self.y_axis += step
