@@ -6,6 +6,7 @@ import time
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
 from bloxorz.block import DoubleBlock
+from bloxorz_population import BloxorzPopulation
 from bloxorz_state import BloxorzState
 from bloxorz_chromosome import BlockAction, BloxorzChromosome
 from bloxorz.game_board import GameBoard
@@ -69,7 +70,8 @@ elif algorithm == "GENETIC":
         new_chromosome = BloxorzChromosome(dna, game_board, initial_position, state_bridges)
         list_chromosome.append(new_chromosome)
 
-    initial_population = Population("MINIMIZE", list_chromosome)
+    # initial_population = BloxorzPopulation("MINIMIZE", list_chromosome)
+    initial_population = BloxorzPopulation("MINIMIZE", list_chromosome)
     mutation_chance = float(sys.argv[5])
 
     genetic_solver = GeneticSolver(mutation_chance, 0, initial_population)
@@ -79,7 +81,10 @@ elif algorithm == "GENETIC":
     end = time.time()
 
     print(f"Algorithm: {algorithm} \t Input: {input_file}")
-    print(f"Population size: {population_size} \t- Chromosome length: {chromosome_size}\t - Mutation chance: {mutation_chance}")
+    print(f"Population size: {population_size}"
+          f"\t- Chromosome length: {chromosome_size}"
+          f"\t - Mutation chance: {mutation_chance}")
     print(f"Time to solve: {end - start}")
     for ele in goal_chromosome:
         print(ele)
+    print(f"Number of generation: {initial_population.number_generation}")
