@@ -70,8 +70,8 @@ elif algorithm == "GENETIC":
         new_chromosome = BloxorzChromosome(dna, game_board, initial_position, state_bridges)
         list_chromosome.append(new_chromosome)
 
+    initial_population = Population("MINIMIZE", list_chromosome)
     # initial_population = BloxorzPopulation("MINIMIZE", list_chromosome)
-    initial_population = BloxorzPopulation("MINIMIZE", list_chromosome)
     mutation_chance = float(sys.argv[5])
 
     genetic_solver = GeneticSolver(mutation_chance, 0, initial_population)
@@ -87,4 +87,4 @@ elif algorithm == "GENETIC":
     print(f"Time to solve: {end - start}")
     for ele in goal_chromosome:
         print(ele)
-    print(f"Number of generation: {initial_population.number_generation}")
+    # print(f"Number of generation: {initial_population.number_generation}")

@@ -5,6 +5,7 @@ from bloxorz.block import DoubleBlock
 from bloxorz.game_board import GameBoard
 from bloxorz.switch import TeleportSwitch, NormalSwitch
 from aisolver.genetic.chromosome import Chromosome
+from distance_calculator import distance_between_two_positions
 from utils import manhattan_distance
 
 
@@ -35,6 +36,7 @@ class BloxorzChromosome (Chromosome):
         self.cross_index = None
         self.game_board = game_board
         self.initial_position = initial_position
+        self.distance_dict = dict()
         if list_initial_state is None:
             self.list_initial_state = []
         else:
@@ -97,7 +99,7 @@ class BloxorzChromosome (Chromosome):
             # Trigger the switch if it is possible
             if action != BlockAction.NONE and penalty == 0:
                 self.trigger_switch(block, list_state)
-                distance = self.distance_block_to_goal(block)
+                distance = self.distance_block_to_goal_v2(block)
                 if distance < min_distance:
                     min_distance = distance
                     self.cross_index = len(new_good_dna) - 1
@@ -106,7 +108,7 @@ class BloxorzChromosome (Chromosome):
         new_dna = new_good_dna + new_bad_dna
         self.DNA = new_dna
 
-        distance = self.distance_block_to_goal(block)
+        distance = self.distance_block_to_goal_v2(block)
         self.fitness_score += distance
 
         return self.fitness_score
@@ -122,6 +124,26 @@ class BloxorzChromosome (Chromosome):
         )
         return distance_1 + distance_2
 
+    def distance_block_to_goal_v2(self, block) -> int:
+        first_position = tuple([block.first_block.x_axis, block.first_block.y_axis])
+        second_position = tuple([block.second_block.x_axis, block.second_block.y_axis])
+
+        if first_position in self.distance_dict:
+            distance_1 = self.distance_dict[first_position]
+        else:
+            distance_1 = distance_between_two_positions(self.game_board, first_position,
+                                                        self.game_board.get_goal_position())
+            self.distance_dict.update({first_position: distance_1})
+
+        if second_position in self.distance_dict:
+            distance_2 = self.distance_dict[second_position]
+        else:
+            distance_2 = distance_between_two_positions(self.game_board, second_position,
+                                                        self.game_board.get_goal_position())
+            self.distance_dict.update({second_position: distance_2})
+
+        return distance_1 + distance_2
+
     def trigger_switch(self, block, list_state):
         first_tile = self.game_board.map[block.first_block.x_axis][block.first_block.y_axis]
         second_tile = self.game_board.map[block.second_block.x_axis][block.second_block.y_axis]
@@ -133,6 +155,22 @@ class BloxorzChromosome (Chromosome):
                 tile.trigger(block)
             elif isinstance(tile, NormalSwitch):
                 tile.trigger(block, list_state)
+
+    # def __str__(self):
+    #     block = DoubleBlock(self.initial_position)
+    #     list_state = self.list_initial_state[:]
+    #
+    #     for action in self.DNA:
+    #         penalty = self.take_valid_action(block, action, list_state)
+    #
+    #         # Trigger the switch if it is possible
+    #         if action != BlockAction.NONE and penalty == 0:
+    #             self.trigger_switch(block, list_state)
+    #
+    #
+    #     return self.fitness_score
+
+
 
 
 
