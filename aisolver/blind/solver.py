@@ -42,7 +42,7 @@ class Solver:
     def solution(current_state: State):
         steps = []
         while current_state.parent is not None:
-            steps.append(current_state.parent_action.name)
+            steps.append(current_state.parent_action)
             current_state = current_state.parent
         steps.reverse()
         return steps

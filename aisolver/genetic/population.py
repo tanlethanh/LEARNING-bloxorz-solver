@@ -42,7 +42,6 @@ class Population:
 
             self.list_chromosome[index].DNA = first_dna
             self.list_chromosome[index + len_half_list].DNA = second_dna
-            # print(f"Pair: {index} and {index + len_half_list}")
             index += 1
 
     def update_best_fitness_score(self, fitness_score):
