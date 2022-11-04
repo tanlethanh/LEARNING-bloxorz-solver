@@ -37,11 +37,11 @@ class BloxorzBoard(Canvas):
             sys.exit(1)
 
     def create_objects(self):
-        self.create_text(1 * BloxorzBoard.TILE_SIZE, 1 * BloxorzBoard.TILE_SIZE, fill="white", text="Hello Bloxorz")
-        self.create_image(1 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile")
-        self.create_image(6 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile")
-        self.create_image(4 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile")
-        self.create_image(4 * BloxorzBoard.TILE_SIZE, 5 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile")
+        self.create_text(1 * BloxorzBoard.TILE_SIZE, 1 * BloxorzBoard.TILE_SIZE, fill="white", text="Hello Bloxorz", anchor="sw")
+        self.create_image(1 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
+        self.create_image(6 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
+        self.create_image(4 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
+        self.create_image(4 * BloxorzBoard.TILE_SIZE, 5 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
 
     # def checkAppleCollision(self):
     #     '''checks if the head of snake collides with apple'''
