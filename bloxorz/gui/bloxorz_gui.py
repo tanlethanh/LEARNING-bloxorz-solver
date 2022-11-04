@@ -1,16 +1,20 @@
 import json
 import sys
-from tkinter import Tk, Frame, Canvas, ALL, NW
+import tkinter
+from tkinter import Tk, Frame, Canvas, ALL, NW, OptionMenu, StringVar, Radiobutton
 from PIL import Image, ImageTk
 from bloxorz.game_board import GameBoard
+from bloxorz.tile import TileType
 
 
 class BloxorzBoard(Canvas):
 
     TILE_SIZE = 40
 
-    def __init__(self, game_board: GameBoard):
-        super().__init__(width=game_board.width * BloxorzBoard.TILE_SIZE,
+    def __init__(self, master, game_board: GameBoard):
+
+        self.game_board = game_board
+        super().__init__(master=master, width=game_board.width * BloxorzBoard.TILE_SIZE,
                          height=game_board.height * BloxorzBoard.TILE_SIZE,
                          background="orange", borderwidth=0, highlightthickness=0)
         self.init_game()
@@ -37,166 +41,26 @@ class BloxorzBoard(Canvas):
             sys.exit(1)
 
     def create_objects(self):
-        self.create_text(1 * BloxorzBoard.TILE_SIZE, 1 * BloxorzBoard.TILE_SIZE, fill="white", text="Hello Bloxorz", anchor="sw")
-        self.create_image(1 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
-        self.create_image(6 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
-        self.create_image(4 * BloxorzBoard.TILE_SIZE, 3 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
-        self.create_image(4 * BloxorzBoard.TILE_SIZE, 5 * BloxorzBoard.TILE_SIZE, image=self.normal_tile, tag="normal_tile", anchor="sw")
-
-    # def checkAppleCollision(self):
-    #     '''checks if the head of snake collides with apple'''
-    #
-    #     apple = self.find_withtag("apple")
-    #     head = self.find_withtag("head")
-    #
-    #     x1, y1, x2, y2 = self.bbox(head)
-    #     overlap = self.find_overlapping(x1, y1, x2, y2)
-    #
-    #     for ovr in overlap:
-    #
-    #         if apple[0] == ovr:
-    #
-    #             self.score += 1
-    #             x, y = self.coords(apple)
-    #             self.create_image(x, y, image=self.dot, anchor=NW, tag="dot")
-    #             self.locateApple()
+        for col in self.game_board.map:
+            for ele in col:
+                if ele.state == TileType.ON:
+                    self.create_image(ele.x_axis * BloxorzBoard.TILE_SIZE,
+                                      (self.game_board.height - ele.y_axis - 1) * BloxorzBoard.TILE_SIZE,
+                                      image=self.normal_tile,
+                                      tag="normal_tile",
+                                      anchor=NW)
 
 
-    # def moveSnake(self):
-    #     '''moves the Snake object'''
-    #
-    #     dots = self.find_withtag("dot")
-    #     head = self.find_withtag("head")
-    #
-    #     items = dots + head
-    #
-    #     z = 0
-    #     while z < len(items)-1:
-    #
-    #         c1 = self.coords(items[z])
-    #         c2 = self.coords(items[z+1])
-    #         self.move(items[z], c2[0]-c1[0], c2[1]-c1[1])
-    #         z += 1
-    #
-    #     self.move(head, self.moveX, self.moveY)
-
-
-    # def checkCollisions(self):
-    #     '''checks for collisions'''
-    #
-    #     dots = self.find_withtag("dot")
-    #     head = self.find_withtag("head")
-    #
-    #     x1, y1, x2, y2 = self.bbox(head)
-    #     overlap = self.find_overlapping(x1, y1, x2, y2)
-    #
-    #     for dot in dots:
-    #         for over in overlap:
-    #             if over == dot:
-    #               self.inGame = False
-    #
-    #     if x1 < 0:
-    #         self.inGame = False
-    #
-    #     if x1 > Cons.BOARD_WIDTH - Cons.DOT_SIZE:
-    #         self.inGame = False
-    #
-    #     if y1 < 0:
-    #         self.inGame = False
-    #
-    #     if y1 > Cons.BOARD_HEIGHT - Cons.DOT_SIZE:
-    #         self.inGame = False
-
-
-    # def locateApple(self):
-    #     '''places the apple object on Canvas'''
-    #
-    #     apple = self.find_withtag("apple")
-    #     self.delete(apple[0])
-    #
-    #     r = random.randint(0, Cons.MAX_RAND_POS)
-    #     self.appleX = r * Cons.DOT_SIZE
-    #     r = random.randint(0, Cons.MAX_RAND_POS)
-    #     self.appleY = r * Cons.DOT_SIZE
-    #
-    #     self.create_image(self.appleX, self.appleY, anchor=NW,
-    #         image=self.apple, tag="apple")
-
-
-    # def onKeyPressed(self, e):
-    #     '''controls direction variables with cursor keys'''
-    #
-    #     key = e.keysym
-    #
-    #     LEFT_CURSOR_KEY = "Left"
-    #     if key == LEFT_CURSOR_KEY and self.moveX <= 0:
-    #
-    #         self.moveX = -Cons.DOT_SIZE
-    #         self.moveY = 0
-    #
-    #     RIGHT_CURSOR_KEY = "Right"
-    #     if key == RIGHT_CURSOR_KEY and self.moveX >= 0:
-    #
-    #         self.moveX = Cons.DOT_SIZE
-    #         self.moveY = 0
-    #
-    #     RIGHT_CURSOR_KEY = "Up"
-    #     if key == RIGHT_CURSOR_KEY and self.moveY <= 0:
-    #
-    #         self.moveX = 0
-    #         self.moveY = -Cons.DOT_SIZE
-    #
-    #     DOWN_CURSOR_KEY = "Down"
-    #     if key == DOWN_CURSOR_KEY and self.moveY >= 0:
-    #
-    #         self.moveX = 0
-    #         self.moveY = Cons.DOT_SIZE
-
-
-    # def onTimer(self):
-    #     '''creates a game cycle each timer event'''
-    #
-    #     self.drawScore()
-    #     self.checkCollisions()
-    #
-    #     if self.inGame:
-    #         self.checkAppleCollision()
-    #         self.moveSnake()
-    #         self.after(Cons.DELAY, self.onTimer)
-    #     else:
-    #         self.gameOver()
-
-
-    # def drawScore(self):
-    #     '''draws score'''
-    #
-    #     score = self.find_withtag("score")
-    #     self.itemconfigure(score, text="Score: {0}".format(self.score))
-
-
-    # def gameOver(self):
-    #     '''deletes all objects and draws game over message'''
-    #
-    #     self.delete(ALL)
-    #     self.create_text(self.winfo_width() /2, self.winfo_height()/2,
-    #         text="Game Over with score {0}".format(self.score), fill="white")
-
-
-# class Snake(Frame):
-#
-#     def __init__(self):
-#         super().__init__()
-#
-#         self.master.title('Snake')
-#         self.board = Board()
-#         self.pack()
+def algorithm_onchange(algorithm, genetic_paras):
+    alg = algorithm.get()
+    if alg == "Genetic":
+        genetic_paras.grid(row=4)
+    elif alg == "DFS" or alg == "BFS":
+        genetic_paras.grid_forget()
 
 
 def main():
-
     root = Tk(screenName="Bloxorz game", className="bloxorz")
-    root.size()
-
     root.geometry("1000x1000")
 
     file_name = "../../input/input1.JSON"
@@ -205,14 +69,60 @@ def main():
 
     # Create bloxorz game board and initial position
     game_board = GameBoard(input_data["map"], input_data["bridges"])
-    # initial_position = input_data["initial_position"]
-    # initial_position = initial_position.split(" ")
-    # initial_position = tuple(int(pos) for pos in initial_position)
+    bloxorz_board = BloxorzBoard(master=root, game_board=game_board)
+    bloxorz_board.grid(row=0)
 
-    bloxorz_board = BloxorzBoard(game_board)
-    bloxorz_board.pack()
+
+    # stage frame
+    stage_frame = Frame(master=root, bg='cyan', width=450, height=50, pady=3)
+    stage_frame.grid(row=1)
+    stage_title = tkinter.Label(master=stage_frame, text="Stage: ")
+    stage_title.grid(row=0, column=1)
+    stage_number = StringVar(master=root)
+    stage_number.set("01")
+    stage_option = OptionMenu(stage_frame, stage_number, "01", "02", "03", "04", "05", "10", "33")
+    stage_option.grid(row=0, column=2)
+
+    # algorithm frame
+    algorithm_frame = Frame(master=root, bg='gray', width=450, height=50, pady=3)
+    algorithm_frame.grid(row=3)
+    algorithm_title = tkinter.Label(master=algorithm_frame, text="Algorithm: ")
+    algorithm = StringVar()
+    algorithm.set("none")
+    R1 = Radiobutton(algorithm_frame, text="DFS", value="DFS", variable=algorithm)
+    R2 = Radiobutton(algorithm_frame, text="BrFS", value="BFS", variable=algorithm)
+    R3 = Radiobutton(algorithm_frame, text="Genetic", value="Genetic", variable=algorithm)
+    algorithm_title.grid(row=0, column=0)
+    R1.grid(row=0, column=1)
+    R2.grid(row=0, column=2)
+    R3.grid(row=0, column=3)
+
+    # genetic para
+    population_size = ""
+    chromosome_length = ""
+    genetic_paras = Frame(master=root, bg='red', width=450, height=50, pady=3)
+    population_size_label = tkinter.Label(master=genetic_paras, text="Population size: ")
+    chromosome_length_label = tkinter.Label(master=genetic_paras, text="Chromosome length: ")
+    population_size_entry = tkinter.Entry(master=genetic_paras, textvariable=population_size)
+    chromosome_length_entry = tkinter.Entry(master=genetic_paras, textvariable=chromosome_length)
+    population_size_label.grid(row=0, column=0)
+    population_size_entry.grid(row=0, column=1)
+    chromosome_length_label.grid(row=0, column=2)
+    chromosome_length_entry.grid(row=0, column=3)
+
+    # algorithm.trace(mode='w', )
+    algorithm.trace('w', lambda s1, s2, s3: algorithm_onchange(algorithm, genetic_paras))
     root.mainloop()
+
+
 
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
+
