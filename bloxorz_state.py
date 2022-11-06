@@ -68,7 +68,7 @@ class BloxorzState(State):
             is_valid_state = new_state.take_action(action)
             if is_valid_state:
                 neighbours.append(new_state)
-                new_state.print_game_state()
+                # new_state.print_game_state()
         return neighbours
 
     def take_action(self, action) -> bool:
@@ -108,7 +108,7 @@ class BloxorzState(State):
                     tile.trigger(self.block)
                 elif isinstance(tile, NormalSwitch):
                     tile.trigger(self.block, self.list_state_all_bridge)
-                    print(f"Trigger {tile.x_axis, tile.y_axis}")
+                    # print(f"Trigger {tile.x_axis, tile.y_axis}")
         except Exception as e:
             print(f"Get off the game board: {e}")
             return False
