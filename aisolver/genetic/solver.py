@@ -15,6 +15,7 @@ class GeneticSolver:
         while self.population.best_fitness_score != self.goal_fitness_score:
             self.population.selection()
             print(f"Best fitness score: {self.population.best_fitness_score}")
+
             self.population.cross_over()
             chance_random = random.Random()
 
@@ -25,3 +26,5 @@ class GeneticSolver:
                 self.population.update_best_fitness_score(fitness_score)
         return [chromosome for chromosome in self.population.list_chromosome
                 if chromosome.fitness_score == self.goal_fitness_score]
+
+    # def print_best_of_population(self):

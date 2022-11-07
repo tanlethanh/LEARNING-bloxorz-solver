@@ -35,6 +35,9 @@ class Frontier:
 
         return frontier_string
 
+    def length(self):
+        return len(self.frontier)
+
 
 class StackFrontier(Frontier):
     def pop(self):

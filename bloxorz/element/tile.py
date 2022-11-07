@@ -36,10 +36,3 @@ class Tile:
         return self.x_axis, self.y_axis
 
 
-class Bridge:
-
-    list_tile: list[Tile]
-
-    def __init__(self, index, list_tile):
-        self.list_tile = [tile for tile in list_tile if isinstance(tile, Tile)]
-        self.index = index

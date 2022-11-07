@@ -4,7 +4,8 @@ from bloxorz.element.block import DoubleBlock
 from bloxorz.element.game_board import GameBoard
 from bloxorz.element.switch import TeleportSwitch, NormalSwitch
 from aisolver.genetic.chromosome import Chromosome
-from utils import manhattan_distance
+from bloxorz.utils.maze_distance import maze_distance
+from bloxorz.utils.manhattan_distance import manhattan_distance
 
 
 class BlockAction(Enum):
@@ -24,13 +25,19 @@ class BlockAction(Enum):
         return self.value == other.value
 
     def opposite_action(self):
+        """
+        Get the opposite action of current action left <-> right, up <-> down
+        """
         if self != BlockAction.NONE and self.value != BlockAction.TOGGLE_FOCUSSING:
             return BlockAction(-self.value)
 
 
-class BloxorzChromosome (Chromosome):
+class BloxorzChromosome(Chromosome):
 
-    def __init__(self, dna, game_board: GameBoard, initial_position, list_initial_state):
+    DISTANCE_CALCULATION_TYPES = ["manhattan", "maze"]
+
+    def __init__(self, dna, game_board: GameBoard, initial_position, list_initial_state,
+                 distance_calculation_type="manhattan"):
         self.cross_index = None
         self.game_board = game_board
         self.initial_position = initial_position
@@ -38,6 +45,14 @@ class BloxorzChromosome (Chromosome):
             self.list_initial_state = []
         else:
             self.list_initial_state = list_initial_state
+
+        self.distance_calculation_type = distance_calculation_type
+        if self.distance_calculation_type == 1:
+            pass
+        elif self.distance_calculation_type == 2:
+            # Use dict to optimize the routing calculation
+            self.distance_dict = dict()
+
         super().__init__(dna, list(BlockAction))
 
     def take_valid_action(self, block: DoubleBlock, action: BlockAction, list_state) -> int:
@@ -102,7 +117,7 @@ class BloxorzChromosome (Chromosome):
             # Trigger the switch if it is possible
             if action != BlockAction.NONE and penalty == 0:
                 self.trigger_switch(block, list_state)
-                distance = self.distance_block_to_goal(block)
+                distance = self.distance_fitness(block)
                 if distance < min_distance:
                     min_distance = distance
                     self.cross_index = len(new_good_dna) - 1
@@ -111,28 +126,40 @@ class BloxorzChromosome (Chromosome):
         new_dna = new_good_dna + new_bad_dna
         self.DNA = new_dna
 
-        distance = self.distance_block_to_goal(block)
+        distance = self.distance_fitness(block)
         self.fitness_score += distance
 
         return self.fitness_score
 
-    def distance_block_to_goal(self, block, version=1) -> int:
+    def distance_fitness(self, block: DoubleBlock) -> int:
         """
         This function calculates distance from position of a block to goal position in the game board
-        We have two version of calculation
+        We have two type of calculation
         - Version 1: manhattan distance
         - Version 2: local optimize route - use BrFS with maze problem
         """
-        if version == 1:
-            distance_1 = manhattan_distance(
-                (block.first_block.x_axis, block.first_block.y_axis),
-                self.game_board.get_goal_position()
-            )
-            distance_2 = manhattan_distance(
-                (block.second_block.x_axis, block.second_block.y_axis),
-                self.game_board.get_goal_position()
-            )
-            return distance_1 + distance_2
+        first_position = block.first_block.get_position()
+        second_position = block.second_block.get_position()
+        list_position = [first_position, second_position]
+
+        distance = 0
+        if self.distance_calculation_type == "manhattan":
+            for position in list_position:
+                distance += manhattan_distance(position, self.game_board.get_goal_position())
+            return distance
+
+        elif self.distance_calculation_type == "maze":
+            for position in list_position:
+                if position in self.distance_dict:
+                    distance += self.distance_dict[first_position]
+                else:
+                    distance += maze_distance(self.game_board, first_position,
+                                              self.game_board.get_goal_position())
+                    self.distance_dict.update({first_position: distance})
+            return distance
+
+        else:
+            raise Exception("Version of distance calculation is invalid")
 
     def trigger_switch(self, block, list_state):
         """
@@ -149,7 +176,10 @@ class BloxorzChromosome (Chromosome):
             elif isinstance(tile, NormalSwitch):
                 tile.trigger(block, list_state)
 
+    @staticmethod
+    def is_valid_distance_calculation_type(cross_over_type):
+        return cross_over_type in BloxorzChromosome.DISTANCE_CALCULATION_TYPES
 
-
-
-
+    @staticmethod
+    def all_distance_calculation_types():
+        return BloxorzChromosome.DISTANCE_CALCULATION_TYPES[:]

@@ -2,7 +2,8 @@ from multipledispatch import dispatch
 
 from bloxorz.element.block import DoubleBlock, DoubleBlockState
 from bloxorz.element.switch import NormalSwitch, SwitchType, SwitchFunction, TeleportSwitch
-from bloxorz.element.tile import Tile, TileType, BridgeState, Bridge
+from bloxorz.element.tile import Tile, TileType, BridgeState
+from bloxorz.element.bridge import Bridge
 
 
 class GameBoard:

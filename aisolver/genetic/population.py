@@ -35,6 +35,7 @@ class Population:
         while index < len_half_list:
             len_dna = len(self.list_chromosome[index].DNA)
             split_point = random.randint(0, len_dna)
+
             first_dna = (self.list_chromosome[index].DNA[0:split_point] +
                          self.list_chromosome[index + 1].DNA[split_point:len_dna])
             second_dna = (self.list_chromosome[index].DNA[split_point:len_dna] +

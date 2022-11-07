@@ -1,7 +1,13 @@
 import json
+import random
+import time
 
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
+from aisolver.genetic.population import Population
+from aisolver.genetic.solver import GeneticSolver
+from bloxorz.bloxorz_chromosome import BlockAction, BloxorzChromosome
+from bloxorz.bloxorz_population import BloxorzPopulation
 from bloxorz.element.block import DoubleBlock
 from bloxorz.element.game_board import GameBoard
 from bloxorz.bloxorz_state import BloxorzState
@@ -10,8 +16,79 @@ from bloxorz.bloxorz_state import BloxorzState
 class BloxorzSolver:
 
     @staticmethod
-    def blind_solve(file_name, algorithm):
-        with open(f"../input/{file_name}") as f:
+    def blind_solve(input_file_name, algorithm):
+        """
+        This function solve bloxorz game by blind search algorithm
+        :param input_file_name
+        :param algorithm is DFS (Depth first search) or BFS (Breadth first search)
+        :return: list step of solution
+        """
+        game_board, state_bridges, initial_position = BloxorzSolver.parse_input_data(input_file_name)
+
+        frontier = None
+        if algorithm == "DFS":
+            frontier = StackFrontier()
+
+        elif algorithm == "BFS":
+            frontier = QueueFrontier()
+
+        initial_state = BloxorzState(DoubleBlock(initial_position), state_bridges, game_board)
+        game_solver = Solver(frontier, initial_state)
+
+        start = time.time()
+        res = game_solver.solve()
+        end = time.time()
+
+        report = dict({
+            "time_to_solve": end - start,
+            "number_of_explored_state": len(game_solver.explored),
+            "number_of_remain_state": game_solver.frontier.length(),
+            "number_of_step": len(res)
+        })
+
+        if res is not None:
+            return dict({
+                "solution": [action.name for action in res],
+                "report": report
+            })
+        else:
+            print("Cannot solve!")
+            return None
+
+    @staticmethod
+    def genetic_solve(input_file_name, population_size, chromosome_length,
+                      mutation_chance, cross_over_type, distance_fitness_type):
+
+        game_board, state_bridges, initial_position = BloxorzSolver.parse_input_data(input_file_name)
+        list_chromosome = []
+
+        if not BloxorzChromosome.is_valid_distance_calculation_type(distance_fitness_type):
+            raise Exception("Type of distance fitness calculation is invalid")
+        if not BloxorzPopulation.is_valid_cross_over_type(cross_over_type):
+            raise Exception("Type of cross over implementation is invalid")
+
+        for i in range(0, population_size):
+            dna = []
+            print(i)
+            for j in range(0, chromosome_length):
+                index_action = random.randint(0, BlockAction.__len__() - 1)
+                dna.append(list(BlockAction)[index_action])
+            new_chromosome = BloxorzChromosome(dna, game_board, initial_position, state_bridges, distance_fitness_type)
+            list_chromosome.append(new_chromosome)
+
+        initial_population = BloxorzPopulation(list_chromosome)
+        genetic_solver = GeneticSolver(
+            mutation_chance=mutation_chance,
+            goal_fitness_score=0,
+            initial_population=initial_population
+        )
+
+        res = genetic_solver.solve()
+        return res
+
+    @staticmethod
+    def parse_input_data(input_file_name):
+        with open(f"./bloxorz/input/{input_file_name}") as f:
             input_data = json.load(f)
 
         # Create bloxorz game board and initial position
@@ -27,19 +104,4 @@ class BloxorzSolver:
             print(e)
             state_bridges = [False] * len(game_board.bridges)
 
-        frontier = None
-        if algorithm == "DFS":
-            frontier = StackFrontier()
-
-        elif algorithm == "BFS":
-            frontier = QueueFrontier()
-
-        initial_state = BloxorzState(DoubleBlock(initial_position), state_bridges, game_board)
-        game_solver = Solver(frontier, initial_state)
-        res = game_solver.solve()
-
-        if res is not None:
-            return [action.name for action in res]
-        else:
-            print("Cannot solve!")
-            return None
+        return game_board, state_bridges, initial_position

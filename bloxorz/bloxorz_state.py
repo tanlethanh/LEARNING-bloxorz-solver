@@ -94,20 +94,18 @@ class BloxorzState(State):
 
         # Trigger the switch if it's possible
         try:
-            tiles = []
-            x_1, y_1 = self.block.first_block.get_position()
-            x_2, y_2 = self.block.second_block.get_position()
-            tile_1 = self.game_board.map[x_1][y_1]
-            tile_2 = self.game_board.map[x_2][y_2]
-            tiles.append(tile_1)
-            if tile_2 != tile_1:
-                tiles.append(tile_2)
+            tiles = set()
+            tiles.add(self.block.first_block.get_position())
+            tiles.add(self.block.second_block.get_position())
+            tiles = [self.game_board.map[x][y] for x, y in tiles]
+
             for tile in tiles:
                 if isinstance(tile, TeleportSwitch):
                     tile.trigger(self.block)
                 elif isinstance(tile, NormalSwitch):
                     tile.trigger(self.block, self.list_state_all_bridge)
                     # print(f"Trigger {tile.x_axis, tile.y_axis}")
+
         except Exception as e:
             print(f"Get off the game board: {e}")
             return False

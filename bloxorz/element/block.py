@@ -3,7 +3,7 @@ from enum import Enum
 from multipledispatch import dispatch
 
 from bloxorz.element.single_block import SingleBlock
-from bloxorz.utils import manhattan_distance
+from bloxorz.utils.manhattan_distance import manhattan_distance
 
 
 class DoubleBlockState(Enum):
