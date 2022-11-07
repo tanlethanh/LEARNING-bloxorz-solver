@@ -2,8 +2,8 @@ from enum import Enum
 
 from multipledispatch import dispatch
 
-from bloxorz.single_block import SingleBlock
-from utils import manhattan_distance
+from bloxorz.element.single_block import SingleBlock
+from bloxorz.utils import manhattan_distance
 
 
 class DoubleBlockState(Enum):

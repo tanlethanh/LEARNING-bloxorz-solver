@@ -1,16 +1,13 @@
 import json
-import os.path
-import subprocess
 import sys
-import time
 import tkinter
-from tkinter import Tk, Frame, Canvas, ALL, NW, OptionMenu, StringVar, Radiobutton, Button
+from tkinter import Tk, Frame, Canvas, NW, OptionMenu, StringVar, Radiobutton, Button
 from PIL import Image, ImageTk
 
-from bloxorz.block import DoubleBlock
-from bloxorz.game_board import GameBoard
-from bloxorz.switch import NormalSwitch, TeleportSwitch
-from bloxorz.tile import TileType
+from bloxorz.element.block import DoubleBlock
+from bloxorz.element.game_board import GameBoard
+from bloxorz.element.switch import NormalSwitch, TeleportSwitch
+from bloxorz.element.tile import TileType
 from bloxorz.bloxorz_solver import BloxorzSolver
 
 

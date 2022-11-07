@@ -1,5 +1,5 @@
 from aisolver.genetic.population import Population
-from bloxorz_chromosome import BloxorzChromosome
+from bloxorz.bloxorz_chromosome import BloxorzChromosome
 
 
 class BloxorzPopulation(Population):
@@ -23,6 +23,5 @@ class BloxorzPopulation(Population):
 
             self.list_chromosome[index].DNA = first_dna
             self.list_chromosome[index + len_half_list].DNA = second_dna
-            # print(f"Pair: {index} and {index + len_half_list}")
             index += 1
 

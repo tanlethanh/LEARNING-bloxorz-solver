@@ -1,4 +1,4 @@
-from bloxorz.block import SingleBlock
+from bloxorz.element.block import SingleBlock
 
 
 def manhattan_distance(f, s):

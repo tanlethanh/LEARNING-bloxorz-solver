@@ -1,9 +1,8 @@
-import random
 from enum import Enum
 
-from bloxorz.block import DoubleBlock
-from bloxorz.game_board import GameBoard
-from bloxorz.switch import TeleportSwitch, NormalSwitch
+from bloxorz.element.block import DoubleBlock
+from bloxorz.element.game_board import GameBoard
+from bloxorz.element.switch import TeleportSwitch, NormalSwitch
 from aisolver.genetic.chromosome import Chromosome
 from utils import manhattan_distance
 
@@ -41,10 +40,12 @@ class BloxorzChromosome (Chromosome):
             self.list_initial_state = list_initial_state
         super().__init__(dna, list(BlockAction))
 
-    # This function take action to a block
-    # If position of block is not valid in the game board, reverse action of the block
-    # Return penalty score of this action
     def take_valid_action(self, block: DoubleBlock, action: BlockAction, list_state) -> int:
+        """
+        This function take action to a block
+        If position of block is not valid in the game board, reverse action of the block
+        Return penalty score of this action
+        """
         try:
             if action == BlockAction.NONE:
                 return 0
@@ -70,7 +71,11 @@ class BloxorzChromosome (Chromosome):
             return 1
 
     def calculate_fitness(self):
-
+        """
+        This function calculate fitness score of a chromosome
+        Fitness score = distance fitness + position penalty
+        Best fitness score = Minimum fitness = 0
+        """
         block = DoubleBlock(self.initial_position)
         list_state = self.list_initial_state[:]
 
@@ -111,18 +116,28 @@ class BloxorzChromosome (Chromosome):
 
         return self.fitness_score
 
-    def distance_block_to_goal(self, block) -> int:
-        distance_1 = manhattan_distance(
-            (block.first_block.x_axis, block.first_block.y_axis),
-            self.game_board.get_goal_position()
-        )
-        distance_2 = manhattan_distance(
-            (block.second_block.x_axis, block.second_block.y_axis),
-            self.game_board.get_goal_position()
-        )
-        return distance_1 + distance_2
+    def distance_block_to_goal(self, block, version=1) -> int:
+        """
+        This function calculates distance from position of a block to goal position in the game board
+        We have two version of calculation
+        - Version 1: manhattan distance
+        - Version 2: local optimize route - use BrFS with maze problem
+        """
+        if version == 1:
+            distance_1 = manhattan_distance(
+                (block.first_block.x_axis, block.first_block.y_axis),
+                self.game_board.get_goal_position()
+            )
+            distance_2 = manhattan_distance(
+                (block.second_block.x_axis, block.second_block.y_axis),
+                self.game_board.get_goal_position()
+            )
+            return distance_1 + distance_2
 
     def trigger_switch(self, block, list_state):
+        """
+        This function triggers the switch if a block standing on a switch
+        """
         first_tile = self.game_board.map[block.first_block.x_axis][block.first_block.y_axis]
         second_tile = self.game_board.map[block.second_block.x_axis][block.second_block.y_axis]
         tiles = [first_tile]

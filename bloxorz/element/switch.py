@@ -2,8 +2,8 @@ from enum import Enum
 
 from multipledispatch import dispatch
 
-from bloxorz.block import DoubleBlock, DoubleBlockState
-from bloxorz.tile import Tile, TileType, Bridge, BridgeState
+from bloxorz.element.block import DoubleBlock, DoubleBlockState
+from bloxorz.element.tile import Tile, TileType, Bridge
 
 
 class SwitchType(Enum):

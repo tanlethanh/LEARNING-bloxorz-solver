@@ -1,10 +1,9 @@
 from enum import Enum
 
 from aisolver.blind.state import State
-from bloxorz.block import DoubleBlock
-from bloxorz.game_board import GameBoard
-from bloxorz.switch import TeleportSwitch, NormalSwitch
-from bloxorz.tile import Tile
+from bloxorz.element.block import DoubleBlock
+from bloxorz.element.game_board import GameBoard
+from bloxorz.element.switch import TeleportSwitch, NormalSwitch
 
 
 class Action(Enum):

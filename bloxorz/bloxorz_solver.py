@@ -2,9 +2,9 @@ import json
 
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
-from bloxorz.block import DoubleBlock
-from bloxorz.game_board import GameBoard
-from bloxorz_state import BloxorzState
+from bloxorz.element.block import DoubleBlock
+from bloxorz.element.game_board import GameBoard
+from bloxorz.bloxorz_state import BloxorzState
 
 
 class BloxorzSolver:

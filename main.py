@@ -5,47 +5,31 @@ import time
 
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
-from bloxorz.block import DoubleBlock
-from bloxorz_population import BloxorzPopulation
-from bloxorz_state import BloxorzState
-from bloxorz_chromosome import BlockAction, BloxorzChromosome
-from bloxorz.game_board import GameBoard
+from bloxorz.element.block import DoubleBlock
+from bloxorz.bloxorz_population import BloxorzPopulation
+from bloxorz.bloxorz_state import BloxorzState
+from bloxorz.bloxorz_chromosome import BlockAction, BloxorzChromosome
+from bloxorz.element.game_board import GameBoard
 from aisolver.genetic.solver import Population, GeneticSolver
 import argparse
 
 
 def parse_input():
     parser = argparse.ArgumentParser()
-    msg = "Bloxorz solver"
-    #     print("arguments: [input file name] [algorithm]")
-    #     print("algorithm: dfs/bfs/genetic")
-    #     print("algorithm == genetic, we need more parameter: [chromosome length] [population size] [mutation chance]")
-    parser.add_argument("-l", "--Level", help="Game level: [1,33]", type=int, required=True)
-    parser.add_argument("-a", "--Algorithm", help="Algorithm: dfs/bfs/genetic", type=str, required=True)
-    parser.add_argument("-s", "--Size", help="Genetic population size, default: 100", type=int, default=100)
-    parser.add_argument("-t", "--Type", help="Genetic population type trigger, default: 0", type=int, default=0)
-    parser.add_argument("-m", "--Move", help="Genetic chromosome size, default: 20", type=int, default=20)
-    parser.add_argument("-v", "--Version", help="Genetic distance calculation version: 1/2, default: 1", type=int,
+    parser.add_argument("-l", "--level", help="Game level: [1,33]", type=int, required=True)
+    parser.add_argument("-a", "--algorithm", help="Algorithm: dfs/bfs/genetic", type=str, required=True)
+    parser.add_argument("-s", "--size", help="Genetic population size, default: 100", type=int, default=100)
+    parser.add_argument("-t", "--type", help="Genetic population type trigger, default: 0", type=int, default=0)
+    parser.add_argument("-m", "--move", help="Genetic chromosome size, default: 20", type=int, default=20)
+    parser.add_argument("-v", "--version", help="Genetic distance calculation version: 1/2, default: 1", type=int,
                         default=1)
     parser.add_argument("-c", "--Mutation", help="Genetic mutation chance, default: 0.1", type=float, default=0.1)
     args = parser.parse_args()
     return args
 
 
-# if len(sys.argv) != 3 and len(sys.argv) != 8:
-#     print("arguments: [input file name] [algorithm]")
-#     print("algorithm: dfs/bfs/genetic")
-#     print("algorithm == genetic, we need more parameter: [chromosome length] [population size] [mutation chance]")
-#     print("exit")
-#     sys.exit()
-
-
 def process_input(args):
     input_file = "./input/" + "input{}.JSON".format(args.Level)
-    # Get data from json input file
-    #     input_file = "./input/" + sys.argv[1]
-
-    # Get AI algorithm
     algorithm = args.Algorithm.upper()
     result = {"algorithm": algorithm}
     result.update({"input_file": input_file})
@@ -127,7 +111,6 @@ elif algorithm == "GENETIC":
     elif population_type == 1:
         initial_population = BloxorzPopulation("MINIMIZE", list_chromosome)
     mutation_chance = input["mutation_chance"]
-    print("He")
     genetic_solver = GeneticSolver(mutation_chance, 0, initial_population)
 
     start = time.time()
@@ -141,4 +124,3 @@ elif algorithm == "GENETIC":
     print(f"Time to solve: {end - start}")
     for ele in goal_chromosome:
         print(ele)
-    # print(f"Number of generation: {initial_population.number_generation}")
