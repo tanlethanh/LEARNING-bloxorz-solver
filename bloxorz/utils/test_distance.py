@@ -1,9 +1,9 @@
 import json
 import sys
 
-from bloxorz.block import DoubleBlock
-from bloxorz.game_board import GameBoard
-from bloxorz.tile import TileType
+from bloxorz.element.block import DoubleBlock
+from bloxorz.element.game_board import GameBoard
+from bloxorz.element.tile import TileType
 from bloxorz.utils.maze_distance import maze_distance
 
 if len(sys.argv) != 2:

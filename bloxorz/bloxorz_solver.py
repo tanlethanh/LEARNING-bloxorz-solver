@@ -1,6 +1,7 @@
 import json
 import random
 import time
+from pathlib import Path
 
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
@@ -69,14 +70,13 @@ class BloxorzSolver:
 
         for i in range(0, population_size):
             dna = []
-            print(i)
             for j in range(0, chromosome_length):
                 index_action = random.randint(0, BlockAction.__len__() - 1)
                 dna.append(list(BlockAction)[index_action])
             new_chromosome = BloxorzChromosome(dna, game_board, initial_position, state_bridges, distance_fitness_type)
             list_chromosome.append(new_chromosome)
 
-        initial_population = BloxorzPopulation(list_chromosome)
+        initial_population = BloxorzPopulation(list_chromosome, cross_over_type)
         genetic_solver = GeneticSolver(
             mutation_chance=mutation_chance,
             goal_fitness_score=0,
@@ -88,7 +88,14 @@ class BloxorzSolver:
 
     @staticmethod
     def parse_input_data(input_file_name):
-        with open(f"./bloxorz/input/{input_file_name}") as f:
+        """
+        This function parses data from input file
+        :param input_file_name:
+        :return: game_board, state_bridges, initial_position
+        """
+
+        CURRENT_PATH = Path(__file__).parent
+        with open(CURRENT_PATH.joinpath(f"./input/{input_file_name}")) as f:
             input_data = json.load(f)
 
         # Create bloxorz game board and initial position

@@ -12,23 +12,21 @@ from bloxorz.element.tile import TileType
 class BloxorzBoard(Canvas):
     TILE_SIZE = 40
 
-    def __init__(self, master, game_board: GameBoard, block: DoubleBlock, list_state):
+    def __init__(self, master):
+        super().__init__(master=master, width=900, height=500, borderwidth=0, highlightthickness=0)
+        self.pack(padx=20, pady=20)
 
+    def reset_game(self, game_board: GameBoard, block: DoubleBlock, list_state):
         self.game_board = game_board
         self.block = block
         self.list_state = list_state
-        super().__init__(master=master, width=game_board.width * BloxorzBoard.TILE_SIZE,
-                         height=game_board.height * BloxorzBoard.TILE_SIZE, borderwidth=0, highlightthickness=0)
-
+        self.config(width=game_board.width * BloxorzBoard.TILE_SIZE, height=game_board.height * BloxorzBoard.TILE_SIZE)
+        self.delete("all")
         self.init_game()
 
     def init_game(self):
-
         self.load_images()
         self.create_objects()
-        # self.locateApple()
-        # self.bind_all("<Key>", self.onKeyPressed)
-        # self.after(Cons.DELAY, self.onTimer)
 
     def load_images(self):
         try:
@@ -47,7 +45,6 @@ class BloxorzBoard(Canvas):
             self.i_single_block = Image.open("images/single-block.png") \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.single_block = ImageTk.PhotoImage(self.i_single_block)
-
 
         except IOError as e:
             print(e)
@@ -107,7 +104,6 @@ class BloxorzBoard(Canvas):
                     self.itemconfig(f"normal_tile_{index}_{tile_index}", state="hidden")
                 else:
                     self.itemconfig(f"normal_tile_{index}_{tile_index}", state="normal")
-
 
     def auto_play(self, result):
         action = result.pop(0)
