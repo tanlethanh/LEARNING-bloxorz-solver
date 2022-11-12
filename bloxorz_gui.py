@@ -40,14 +40,14 @@ def solve_button_onclick(control_panel, bloxorz_board: BloxorzBoard):
 if __name__ == '__main__':
     root = Tk(screenName="Bloxorz game", className="bloxorz")
     root.geometry("1100x600")
-    background_image = PhotoImage(Image.open("./images/background.jpg").resize(size=(1100, 600)))
+    background_image = PhotoImage(Image.open("bloxorz/gui/images/background.jpg").resize(size=(1100, 600)))
     background = Label(root, image=background_image)
     background.place(x=0, y=0, relwidth=1, relheight=1)
 
     bloxorz_control_panel = BloxorzControlPanel(master=root)
     bloxorz_control_panel.pack()
 
-    solve_button_image = PhotoImage(file="./images/solve_button.png")
+    solve_button_image = PhotoImage(file="bloxorz/gui/images/solve_button.png")
     bloxorz_game = BloxorzBoard(root)
     solve_button = Button(image=solve_button_image,
                           borderwidth=0,

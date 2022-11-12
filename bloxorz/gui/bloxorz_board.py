@@ -1,3 +1,4 @@
+import os
 import sys
 from tkinter import Canvas, NW
 
@@ -8,6 +9,7 @@ from bloxorz.element.game_board import GameBoard
 from bloxorz.element.switch import NormalSwitch, TeleportSwitch, SwitchType
 from bloxorz.element.tile import TileType
 
+root = os.path.dirname(os.path.abspath(__file__))
 
 class BloxorzBoard(Canvas):
     TILE_SIZE = 40
@@ -35,27 +37,27 @@ class BloxorzBoard(Canvas):
 
     def load_images(self):
         try:
-            self.i_normal_tile = Image.open("images/normal-tile-v3.png") \
+            self.i_normal_tile = Image.open(os.path.join(root, "images/normal-tile-v3.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.normal_tile = ImageTk.PhotoImage(self.i_normal_tile)
 
-            self.i_orange_tile = Image.open("images/orange-tile.png") \
+            self.i_orange_tile = Image.open(os.path.join(root, "images/orange-tile.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.orange_tile = ImageTk.PhotoImage(self.i_orange_tile)
 
-            self.i_normal_switch = Image.open("images/normal-sw-v2.png") \
+            self.i_normal_switch = Image.open(os.path.join(root, "images/normal-sw-v2.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.normal_switch = ImageTk.PhotoImage(self.i_normal_switch)
 
-            self.i_heavy_switch = Image.open("images/heavy-switch-v2.png") \
+            self.i_heavy_switch = Image.open(os.path.join(root, "images/heavy-switch-v2.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.heavy_switch = ImageTk.PhotoImage(self.i_heavy_switch)
 
-            self.i_teleport_switch = Image.open("images/teleport-switch.png") \
+            self.i_teleport_switch = Image.open(os.path.join(root, "images/teleport-switch.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.teleport_switch = ImageTk.PhotoImage(self.i_teleport_switch)
 
-            self.i_single_block = Image.open("images/single-block-v2.png") \
+            self.i_single_block = Image.open(os.path.join(root, "images/single-block-v2.png")) \
                 .resize(size=(BloxorzBoard.TILE_SIZE, BloxorzBoard.TILE_SIZE))
             self.single_block = ImageTk.PhotoImage(self.i_single_block)
 
