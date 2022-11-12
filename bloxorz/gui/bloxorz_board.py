@@ -20,6 +20,7 @@ class BloxorzBoard(Canvas):
         self.default_font = ("Inter", 13 * -1)
 
     def reset_game(self, game_board: GameBoard, block: DoubleBlock, list_state):
+        self.delete("all")
         self.game_board = game_board
         self.block = block
         self.list_state = list_state
@@ -27,7 +28,6 @@ class BloxorzBoard(Canvas):
         board_width = game_board.width * BloxorzBoard.TILE_SIZE
         self.pad_x = (self.winfo_width() - board_width) / 2
         self.pad_y = (self.winfo_height() - board_height) / 2
-        self.delete("all")
         self.init_game()
 
     def init_game(self):
