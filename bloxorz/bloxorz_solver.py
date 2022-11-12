@@ -1,7 +1,10 @@
 import json
+import os
 import random
 import time
 from pathlib import Path
+
+import psutil
 
 from aisolver.blind.frontier import StackFrontier, QueueFrontier
 from aisolver.blind.solver import Solver
@@ -37,14 +40,17 @@ class BloxorzSolver:
         game_solver = Solver(frontier, initial_state)
 
         start = time.time()
+        begin_mem = psutil.Process(os.getpid()).memory_info().rss
         res = game_solver.solve()
         end = time.time()
+        end_mem = psutil.Process(os.getpid()).memory_info().rss
 
         report = dict({
             "time_to_solve": end - start,
             "number_of_explored_state": len(game_solver.explored),
             "number_of_remain_state": game_solver.frontier.length(),
-            "number_of_step": len(res)
+            "number_of_step": len(res),
+            "consumption_memory": "{:.3f} B".format((end_mem - begin_mem) * 1e-3)
         })
 
         if res is not None:

@@ -18,7 +18,7 @@ def solve_button_onclick(control_panel, bloxorz_board: BloxorzBoard):
 
     if control_panel.get_algorithm() in ["DFS", "BFS"]:
         solution = BloxorzSolver.blind_solve(input_filename, control_panel.get_algorithm())
-
+        bloxorz_board.render_blind_statistic(solution["report"])
     else:
         solution = BloxorzSolver.genetic_solve(input_filename,
                                                control_panel.get_population_size(),
@@ -27,6 +27,8 @@ def solve_button_onclick(control_panel, bloxorz_board: BloxorzBoard):
                                                control_panel.get_distance_type(),
                                                control_panel.get_cross_type()
                                                )
+        bloxorz_board.render_genetic_statistic(solution["report"])
+
     bloxorz_board.auto_play(solution["solution"])
 
 

@@ -13,10 +13,11 @@ class BloxorzBoard(Canvas):
     TILE_SIZE = 40
 
     def __init__(self, master):
-        super().__init__(master=master, width=900, height=500, borderwidth=0, highlightthickness=0)
+        super().__init__(master=master, width=900, height=500, highlightthickness=0)
         self.pack(padx=20, pady=20)
-        self.create_rectangle(0, 0, 900, 500, outline="black", fill="white")
+        # self.create_rectangle(0, 0, 900, 500, outline="black", fill="white")
         self.load_images()
+        self.default_font = ("Inter", 13 * -1)
 
     def reset_game(self, game_board: GameBoard, block: DoubleBlock, list_state):
         self.game_board = game_board
@@ -145,3 +146,37 @@ class BloxorzBoard(Canvas):
         _x = x * BloxorzBoard.TILE_SIZE + self.pad_x
         _y = (self.game_board.height - y - 1) * BloxorzBoard.TILE_SIZE + self.pad_y
         return _x, _y
+
+    def render_genetic_statistic(self, report: dict):
+        self.create_text(10, 10,
+                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 30,
+                         text="Generation: {:.3f}".format(report["number_of_generation"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 50,
+                         text="Number of steps: {:.3f}".format(report["number_of_step"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 70,
+                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 90,
+                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
+                         anchor=NW, font=self.default_font)
+
+    def render_blind_statistic(self, report: dict):
+        self.create_text(10, 10,
+                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 30,
+                         text="Memory: {}".format(report["consumption_memory"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 50,
+                         text="Explored states: {}".format(report["number_of_explored_state"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 70,
+                         text="Remain states: {}".format(report["number_of_remain_state"]),
+                         anchor=NW, font=self.default_font)
+        self.create_text(10, 90,
+                         text="Steps: {}".format(report["number_of_step"]),
+                         anchor=NW, font=self.default_font)

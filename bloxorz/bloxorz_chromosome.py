@@ -47,9 +47,9 @@ class BloxorzChromosome(Chromosome):
             self.list_initial_state = list_initial_state
 
         self.distance_calculation_type = distance_calculation_type
-        if self.distance_calculation_type == 1:
+        if self.distance_calculation_type == "manhattan":
             pass
-        elif self.distance_calculation_type == 2:
+        elif self.distance_calculation_type == "maze":
             # Use dict to optimize the routing calculation
             self.distance_dict = dict()
 

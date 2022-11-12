@@ -4,6 +4,8 @@ import psutil
 import os
 import time
 
+import yaml
+
 from bloxorz.bloxorz_solver import BloxorzSolver
 
 
@@ -68,11 +70,20 @@ algorithm = input_arguments["algorithm"]
 input_file_name = input_arguments["input_file"]
 
 game_result = "None"
-start = time.time()
 begin_mem = psutil.Process(os.getpid()).memory_info().rss
 if algorithm == "DFS" or algorithm == "BFS":
     game_result = BloxorzSolver.blind_solve(input_file_name, algorithm)
-
+    end_mem = psutil.Process(os.getpid()).memory_info().rss
+    # print(game_result)
+    print("Level: {}".format(parsed_input.level))
+    print("Algorithm: {}".format(algorithm))
+    # print('Solution: {}'.format(game_result['solution']))
+    print("Memory usage: {:.3f}".format((end_mem - begin_mem) * 1e-6), "MB")
+    print("Time to solve: {:.3f}".format(
+        game_result['report']['time_to_solve']), "second")
+    print("Number of explored states: {}".format(
+        game_result['report']['number_of_explored_state']))
+    print("Number of steps: {}".format(game_result['report']['number_of_step']))
 
 elif algorithm == "GENETIC":
 
@@ -84,16 +95,11 @@ elif algorithm == "GENETIC":
         input_arguments["cross_type"],
         input_arguments["distance_type"]
     )
-end_mem = psutil.Process(os.getpid()).memory_info().rss
-end = time.time()
+    end_mem = psutil.Process(os.getpid()).memory_info().rss
+    game_result.update({
+        "consumption_memory": "{:.3f} B".format((end_mem - begin_mem) * 1e-3)
+    })
+    print(yaml.dump(game_result, default_flow_style=False))
 
-# print(game_result)
-print("Level: {}".format(parsed_input.level))
-print("Algorithm: {}".format(algorithm))
-# print('Solution: {}'.format(game_result['solution']))
-print("Memory usage: {:.3f}".format((end_mem - begin_mem) * 1e-6), "MB")
-print("Time to solve: {:.3f}".format(
-    game_result['report']['time_to_solve']), "second")
-print("Number of explored states: {}".format(
-    game_result['report']['number_of_explored_state']))
-print("Number of steps: {}".format(game_result['report']['number_of_step']))
+
+
