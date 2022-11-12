@@ -103,7 +103,7 @@ class BloxorzChromosome(Chromosome):
         new_good_dna = []
         new_bad_dna = []
         min_distance = 9999
-        for action in self.DNA:
+        for (index, action) in enumerate(self.DNA):
             penalty = self.take_valid_action(block, action, list_state)
             if penalty == 0:
                 new_good_dna.append(action)
@@ -113,6 +113,7 @@ class BloxorzChromosome(Chromosome):
             if self.game_board.is_goal(block):
                 self.DNA = new_good_dna + ([BlockAction.NONE] * (len(self.DNA) - len(new_good_dna)))
                 self.fitness_score = 0
+                self.goal_index = index
                 return self.fitness_score
 
             self.fitness_score += penalty
@@ -168,6 +169,7 @@ class BloxorzChromosome(Chromosome):
         """
         This function triggers the switch if a block standing on a switch
         """
+        self.game_board.update_map(list_state)
         first_tile = self.game_board.map[block.first_block.x_axis][block.first_block.y_axis]
         second_tile = self.game_board.map[block.second_block.x_axis][block.second_block.y_axis]
         tiles = [first_tile]
@@ -188,8 +190,10 @@ class BloxorzChromosome(Chromosome):
                 "value": False
             }
             self.take_valid_action(block, action, list_state, is_valid)
+            self.trigger_switch(block, list_state)
             if is_valid["value"]:
                 result.append(action)
+
         return result
 
     @staticmethod
