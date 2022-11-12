@@ -55,7 +55,7 @@ class BloxorzChromosome(Chromosome):
 
         super().__init__(dna, list(BlockAction))
 
-    def take_valid_action(self, block: DoubleBlock, action: BlockAction, list_state) -> int:
+    def take_valid_action(self, block: DoubleBlock, action: BlockAction, list_state, is_valid=None) -> int:
         """
         This function take action to a block
         If position of block is not valid in the game board, reverse action of the block
@@ -80,6 +80,9 @@ class BloxorzChromosome(Chromosome):
 
         self.game_board.update_map(list_state)
         if self.game_board.is_valid_position(block):
+            # for get all valid action
+            if is_valid is not None:
+                is_valid["value"] = True
             return 0
         else:
             self.take_valid_action(block, action.opposite_action(), list_state)
@@ -176,6 +179,19 @@ class BloxorzChromosome(Chromosome):
             elif isinstance(tile, NormalSwitch):
                 tile.trigger(block, list_state)
 
+    def get_valid_action(self):
+        block = DoubleBlock(self.initial_position)
+        list_state = self.list_initial_state[:]
+        result = []
+        for action in self.DNA:
+            is_valid = {
+                "value": False
+            }
+            self.take_valid_action(block, action, list_state, is_valid)
+            if is_valid["value"]:
+                result.append(action)
+        return result
+
     @staticmethod
     def is_valid_distance_calculation_type(cross_over_type):
         return cross_over_type in BloxorzChromosome.DISTANCE_CALCULATION_TYPES
@@ -183,3 +199,5 @@ class BloxorzChromosome(Chromosome):
     @staticmethod
     def all_distance_calculation_types():
         return BloxorzChromosome.DISTANCE_CALCULATION_TYPES[:]
+
+

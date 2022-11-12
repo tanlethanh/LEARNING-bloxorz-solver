@@ -83,8 +83,40 @@ class BloxorzSolver:
             initial_population=initial_population
         )
 
-        res = genetic_solver.solve()
-        return res
+        start = time.time()
+        goal_chromosomes = genetic_solver.solve()
+        end = time.time()
+
+        report_goal_chromosomes = []
+        for chromosome in goal_chromosomes:
+            if isinstance(chromosome, BloxorzChromosome):
+                result = chromosome.get_valid_action()
+                report_goal_chromosomes.append(
+                    dict({
+                        "number_of_step": len(result),
+                        "steps": result
+                    })
+                )
+
+        report = dict({
+            "time_to_solve": end - start,
+            "number_of_generation": initial_population.number_generation,
+            "population_size": population_size,
+            "chromosome_length": chromosome_length,
+            "mutation_chance": mutation_chance,
+            "cross_over_type": cross_over_type,
+            "distance_fitness_type": distance_fitness_type,
+            "report_all_goal_chromosomes": report_goal_chromosomes
+        })
+
+        if goal_chromosomes is not None:
+            return dict({
+                "solution": report_goal_chromosomes[0]["steps"],
+                "report": report
+            })
+        else:
+            print("Cannot solve!")
+            return None
 
     @staticmethod
     def parse_input_data(input_file_name):
