@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, NW
+from tkinter import Tk, Label, Button, NW, Canvas
 
 from PIL import Image
 from PIL.ImageTk import PhotoImage
