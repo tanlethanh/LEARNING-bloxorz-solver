@@ -88,6 +88,14 @@ class BloxorzChromosome(Chromosome):
             self.take_valid_action(block, action.opposite_action(), list_state)
             return 1
 
+    def take_map_penalty(self, block, list_state):
+        self.game_board.update_map(list_state)
+        first_tile = self.game_board.map[block.first_block.x_axis][block.first_block.y_axis]
+        second_tile = self.game_board.map[block.second_block.x_axis][block.second_block.y_axis]
+        first_tile.count += 1
+        second_tile.count += 1
+        return first_tile.count + second_tile.count
+
     def calculate_fitness(self):
         """
         This function calculate fitness score of a chromosome
@@ -126,12 +134,14 @@ class BloxorzChromosome(Chromosome):
                     min_distance = distance
                     self.cross_index = len(new_good_dna) - 1
 
+        map_penalty = self.take_map_penalty(block, list_state)
+
         # restruct dna
         new_dna = new_good_dna + new_bad_dna
         self.DNA = new_dna
 
         distance = self.distance_fitness(block)
-        self.fitness_score += distance
+        self.fitness_score += distance + map_penalty
 
         return self.fitness_score
 

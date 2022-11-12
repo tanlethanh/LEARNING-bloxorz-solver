@@ -95,11 +95,16 @@ elif algorithm == "GENETIC":
         input_arguments["cross_type"],
         input_arguments["distance_type"]
     )
-    end_mem = psutil.Process(os.getpid()).memory_info().rss
-    game_result.update({
-        "consumption_memory": "{:.3f} B".format((end_mem - begin_mem) * 1e-3)
-    })
     print(yaml.dump(game_result, default_flow_style=False))
+
+    print("Level: {}".format(parsed_input.level))
+    print("Algorithm: {}".format(algorithm))
+    print('Solution: {}'.format(game_result['solution']))
+    print("Memory usage: {}".format(game_result['report']['consumption_memory']))
+    print("Time to solve: {:.3f}".format(
+        game_result['report']['time_to_solve']), "second")
+
+    print("Number of steps: {}".format(game_result['report']['number_of_step']))
 
 
 

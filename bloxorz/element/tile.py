@@ -23,6 +23,7 @@ class Tile:
         self.x_axis = x_axis
         self.y_axis = y_axis
         self.state = state
+        self.count = 0
 
     def toggle(self):
         if self.state == TileType.ON:
