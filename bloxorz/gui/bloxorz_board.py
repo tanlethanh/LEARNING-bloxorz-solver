@@ -152,16 +152,13 @@ class BloxorzBoard(Canvas):
                          text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
                          anchor=NW, font=self.default_font)
         self.create_text(10, 30,
-                         text="Generation: {:.3f}".format(report["number_of_generation"]),
+                         text="Memory: {}".format(report["consumption_memory"]),
                          anchor=NW, font=self.default_font)
         self.create_text(10, 50,
-                         text="Number of steps: {:.3f}".format(report["number_of_step"]),
+                         text="Generation: {}".format(report["number_of_generation"]),
                          anchor=NW, font=self.default_font)
         self.create_text(10, 70,
-                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
-                         anchor=NW, font=self.default_font)
-        self.create_text(10, 90,
-                         text="Time to solve: {:.3f}s".format(report["time_to_solve"]),
+                         text="Steps: {}".format(report["number_of_step"]),
                          anchor=NW, font=self.default_font)
 
     def render_blind_statistic(self, report: dict):

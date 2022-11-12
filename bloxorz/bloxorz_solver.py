@@ -74,6 +74,7 @@ class BloxorzSolver:
         if not BloxorzPopulation.is_valid_cross_over_type(cross_over_type):
             raise Exception("Type of cross over implementation is invalid")
 
+        begin_mem = psutil.Process(os.getpid()).memory_info().rss
         for i in range(0, population_size):
             dna = []
             for j in range(0, chromosome_length):
@@ -92,6 +93,7 @@ class BloxorzSolver:
         start = time.time()
         goal_chromosomes = genetic_solver.solve()
         end = time.time()
+        end_mem = psutil.Process(os.getpid()).memory_info().rss
 
         report_goal_chromosomes = []
         for chromosome in goal_chromosomes:
@@ -107,17 +109,19 @@ class BloxorzSolver:
         report = dict({
             "time_to_solve": end - start,
             "number_of_generation": initial_population.number_generation,
+            "number_of_step": report_goal_chromosomes[0]["number_of_step"],
             "population_size": population_size,
             "chromosome_length": chromosome_length,
             "mutation_chance": mutation_chance,
             "cross_over_type": cross_over_type,
             "distance_fitness_type": distance_fitness_type,
-            "report_all_goal_chromosomes": report_goal_chromosomes
+            "report_all_goal_chromosomes": report_goal_chromosomes,
+            "consumption_memory": "{:.3f} B".format((end_mem - begin_mem) * 1e-3)
         })
-
+        solution = report_goal_chromosomes[0]["steps"]
         if goal_chromosomes is not None:
             return dict({
-                "solution": report_goal_chromosomes[0]["steps"],
+                "solution": [action.name for action in solution],
                 "report": report
             })
         else:

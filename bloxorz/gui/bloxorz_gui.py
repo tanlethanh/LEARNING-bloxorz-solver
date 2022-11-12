@@ -20,12 +20,17 @@ def solve_button_onclick(control_panel, bloxorz_board: BloxorzBoard):
         solution = BloxorzSolver.blind_solve(input_filename, control_panel.get_algorithm())
         bloxorz_board.render_blind_statistic(solution["report"])
     else:
+        print(control_panel.get_population_size())
+        print(control_panel.get_chromosome_length())
+        print(control_panel.get_mutation_chane())
+        print(control_panel.get_distance_type())
+        print(control_panel.get_cross_type())
         solution = BloxorzSolver.genetic_solve(input_filename,
                                                control_panel.get_population_size(),
                                                control_panel.get_chromosome_length(),
                                                control_panel.get_mutation_chane(),
-                                               control_panel.get_distance_type(),
-                                               control_panel.get_cross_type()
+                                               control_panel.get_cross_type(),
+                                               control_panel.get_distance_type()
                                                )
         bloxorz_board.render_genetic_statistic(solution["report"])
 
