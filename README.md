@@ -1,4 +1,4 @@
-# Bloxorz-AI-Solver
+# Bloxorz Solver
 AI SOLVER
  - Use search algorithm in AI to solve the game
  
